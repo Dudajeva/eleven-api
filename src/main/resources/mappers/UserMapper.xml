@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.UserMapper">
+
+    <resultMap id="UserMap" type="org.adzc.elevenapi.domain.User">
+        <id column="id" property="id"/>
+        <result column="identity" property="identity"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="password_hash" property="passwordHash"/>
+        <result column="nickname" property="nickname"/>
+        <result column="age" property="age"/>
+        <result column="city" property="city"/>
+        <result column="tier" property="tier"/>
+        <result column="photo_url" property="photoUrl"/>
+    </resultMap>
+
+    <select id="findByIdentity" parameterType="string" resultMap="UserMap">
+        SELECT *
+        FROM users
+        WHERE identity = #{identity}
+        LIMIT 1
+    </select>
+
+    <insert id="insertUser" parameterType="org.adzc.elevenapi.domain.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users
+        (identity, email, phone, password_hash, nickname, age, city, tier, photo_url)
+        VALUES
+        (#{identity}, #{email}, #{phone}, #{passwordHash}, #{nickname}, #{age}, #{city}, #{tier}, #{photoUrl})
+    </insert>
+
+    <select id="countUsers" resultType="long">
+        SELECT COUNT(*) FROM users
+    </select>
+
+</mapper>
