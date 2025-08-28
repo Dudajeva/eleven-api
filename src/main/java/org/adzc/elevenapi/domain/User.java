@@ -22,6 +22,7 @@ public class User {
     private String nickname;
 
     private Integer age;
+    private String province;
     private String city;
     private String tier;           // normal/diamond/supreme
     private String photoUrl;
@@ -47,6 +48,9 @@ public class User {
 
     public Integer getAge() { return age; }
     public void setAge(Integer age) { this.age = age; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
 
     public String getCity() { return city; }
     public void setCity(String city) { this.city = city; }

@@ -12,6 +12,7 @@
         <result column="password_hash" property="passwordHash"/>
         <result column="nickname" property="nickname"/>
         <result column="age" property="age"/>
+        <result column="province" property="province"/>
         <result column="city" property="city"/>
         <result column="tier" property="tier"/>
         <result column="photo_url" property="photoUrl"/>
@@ -26,13 +27,67 @@
 
     <insert id="insertUser" parameterType="org.adzc.elevenapi.domain.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users
-        (identity, email, phone, password_hash, nickname, age, city, tier, photo_url)
+        (identity, email, phone, password_hash, nickname, age,province, city, tier, photo_url)
         VALUES
-        (#{identity}, #{email}, #{phone}, #{passwordHash}, #{nickname}, #{age}, #{city}, #{tier}, #{photoUrl})
+        (#{identity}, #{email}, #{phone}, #{passwordHash}, #{nickname}, #{age},#{province}, #{city}, #{tier}, #{photoUrl})
     </insert>
 
     <select id="countUsers" resultType="long">
         SELECT COUNT(*) FROM users
+    </select>
+
+    <!-- 首页 Feed：为避免敏感字段外泄，显式列字段并做别名 -->
+    <select id="selectUserCards" resultType="org.adzc.elevenapi.feed.UserCard">
+        SELECT
+        id,
+        nickname        AS name,
+        age             AS age,
+        province        AS province,
+        city            AS city,
+        tier            AS tier,
+        photo_url       AS photoUrl
+        FROM users
+        ORDER BY updated_at DESC, id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAllForFeed" resultType="long">
+        SELECT COUNT(*) FROM users
+    </select>
+
+    <!-- 带省市筛选的分页查询 -->
+    <select id="selectUserCardsFiltered" resultType="org.adzc.elevenapi.feed.UserCard">
+        SELECT
+        id,
+        nickname   AS name,
+        age        AS age,
+        province        AS province,
+        city       AS city,
+        tier       AS tier,
+        photo_url  AS photoUrl
+        FROM users
+        <where>
+            <if test="province != null and province != ''">
+                AND province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                AND city = #{city}
+            </if>
+        </where>
+        ORDER BY updated_at DESC, id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countForFeedFiltered" resultType="long">
+        SELECT COUNT(*) FROM users
+        <where>
+            <if test="province != null and province != ''">
+                AND province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                AND city = #{city}
+            </if>
+        </where>
     </select>
 
 </mapper>
