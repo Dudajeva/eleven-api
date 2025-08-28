@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.GeoMapper">
+
+    <resultMap id="RegionMap" type="org.adzc.elevenapi.geo.RegionRow">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="level" property="level"/>
+    </resultMap>
+
+    <select id="countRegions" resultType="long">
+        SELECT COUNT(*) FROM regions
+    </select>
+
+    <insert id="insertRegion" parameterType="org.adzc.elevenapi.geo.RegionRow"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO regions(name, parent_id, level)
+        VALUES (#{name}, #{parentId}, #{level})
+    </insert>
+
+    <select id="selectProvinces" resultMap="RegionMap">
+        SELECT id, name, parent_id, level
+        FROM regions
+        WHERE level = 'province'
+        ORDER BY name
+    </select>
+
+    <select id="selectCitiesByProvince" parameterType="long" resultMap="RegionMap">
+        SELECT id, name, parent_id, level
+        FROM regions
+        WHERE level = 'city' AND parent_id = #{provinceId}
+        ORDER BY name
+    </select>
+
+    <select id="selectMaxUpdatedAt" resultType="java.time.OffsetDateTime">
+        SELECT COALESCE(MAX(updated_at), '1970-01-01') FROM regions
+    </select>
+
+</mapper>
