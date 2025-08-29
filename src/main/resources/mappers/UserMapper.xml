@@ -12,6 +12,7 @@
         <result column="password_hash" property="passwordHash"/>
         <result column="nickname" property="nickname"/>
         <result column="age" property="age"/>
+        <result column="gender" property="gender"/>
         <result column="province" property="province"/>
         <result column="city" property="city"/>
         <result column="tier" property="tier"/>
@@ -27,9 +28,9 @@
 
     <insert id="insertUser" parameterType="org.adzc.elevenapi.domain.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users
-        (identity, email, phone, password_hash, nickname, age,province, city, tier, photo_url)
+        (identity, email, phone, password_hash, nickname, age,gender,province, city, tier, photo_url)
         VALUES
-        (#{identity}, #{email}, #{phone}, #{passwordHash}, #{nickname}, #{age},#{province}, #{city}, #{tier}, #{photoUrl})
+        (#{identity}, #{email}, #{phone}, #{passwordHash}, #{nickname}, #{age}, #{gender},#{province}, #{city}, #{tier}, #{photoUrl})
     </insert>
 
     <select id="countUsers" resultType="long">
@@ -42,6 +43,7 @@
         id,
         nickname        AS name,
         age             AS age,
+        gender          AS gender,
         province        AS province,
         city            AS city,
         tier            AS tier,
@@ -61,6 +63,7 @@
         id,
         nickname   AS name,
         age        AS age,
+        gender          AS gender,
         province        AS province,
         city       AS city,
         tier       AS tier,
@@ -88,6 +91,20 @@
                 AND city = #{city}
             </if>
         </where>
+    </select>
+
+    <select id="selectByEmail" parameterType="string" resultMap="UserMap">
+        SELECT *
+        FROM users
+        WHERE email = #{email}
+        LIMIT 1
+    </select>
+
+    <select id="selectByPhone" parameterType="string" resultMap="UserMap">
+        SELECT *
+        FROM users
+        WHERE phone = #{phone}
+        LIMIT 1
     </select>
 
 </mapper>

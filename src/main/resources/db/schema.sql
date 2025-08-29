@@ -1,18 +1,21 @@
+-- 用户表（如已存在，仅确保 gender 字段和唯一索引存在）
 CREATE TABLE IF NOT EXISTS users (
                                      id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                                     identity VARCHAR(100) NOT NULL UNIQUE,
-    email VARCHAR(100),
-    phone VARCHAR(30),
-    password_hash VARCHAR(100) NOT NULL,
-    nickname VARCHAR(50) NOT NULL,
-    age INT,
-    province VARCHAR(50),             -- 新增：省份
-    city VARCHAR(50),
-    tier VARCHAR(20) DEFAULT 'normal',
-    photo_url VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+                                     email VARCHAR(255) UNIQUE,
+                                     phone VARCHAR(50) UNIQUE,
+                                     password_hash VARCHAR(100) NOT NULL,
+                                     nickname VARCHAR(100) NOT NULL,
+                                     gender VARCHAR(10) NULL,
+                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- 确保唯一约束存在（已存在时会报重复，忽略即可）
+-- ALTER TABLE users ADD CONSTRAINT uk_users_email UNIQUE (email);
+
+-- ALTER TABLE users ADD CONSTRAINT uk_users_phone UNIQUE (phone);
+
 
 -- 统一地区表（省/直辖市/自治区 + 城市）
 CREATE TABLE IF NOT EXISTS regions (

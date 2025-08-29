@@ -14,6 +14,7 @@ public class User {
 
     private String email;
     private String phone;
+    private String gender;
 
     @NotBlank
     private String passwordHash;   // BCrypt
@@ -30,6 +31,14 @@ public class User {
     // getter/setter 省略可用 Lombok，这里手写以免你未装 Lombok
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
     public String getIdentity() { return identity; }
     public void setIdentity(String identity) { this.identity = identity; }

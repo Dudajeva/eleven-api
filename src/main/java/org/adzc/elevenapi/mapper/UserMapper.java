@@ -30,4 +30,9 @@ public interface UserMapper {
 
     long countForFeedFiltered(@Param("province") String province,
                               @Param("city") String city);
+
+
+    User selectByEmail(@Param("email") String email);
+
+    User selectByPhone(@Param("phone") String phone);
 }
