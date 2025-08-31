@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.UserProfileMapper">
+
+    <resultMap id="UserProfileMap" type="org.adzc.elevenapi.domain.UserProfile">
+        <id     column="user_id"     property="userId"/>
+        <result column="nickname"    property="nickname"/>
+        <result column="avatar_url"  property="avatarUrl"/>
+        <result column="gallery_json" property="galleryJson"/>
+        <result column="gender"      property="gender"/>
+        <result column="birthday"    property="birthday"/>
+        <result column="height_cm"   property="heightCm"/>
+        <result column="weight_kg"   property="weightKg"/>
+        <result column="city"        property="city"/>
+        <result column="profession"  property="profession"/>
+        <result column="zodiac"      property="zodiac"/>
+        <result column="hobbies"     property="hobbies"/>
+        <result column="drinking"    property="drinking"/>
+        <result column="wechat"      property="wechat"/>
+    </resultMap>
+
+    <select id="findByUserId" parameterType="long" resultMap="UserProfileMap">
+        SELECT user_id, nickname, avatar_url, gallery_json, gender, birthday,
+               height_cm, weight_kg, city, profession, zodiac, hobbies, drinking, wechat
+        FROM user_profile
+        WHERE user_id = #{userId}
+    </select>
+
+    <insert id="upsert" parameterType="org.adzc.elevenapi.domain.UserProfile">
+        INSERT INTO user_profile(
+            user_id, nickname, avatar_url, gallery_json, gender, birthday,
+            height_cm, weight_kg, city, profession, zodiac, hobbies, drinking, wechat
+        ) VALUES (
+                     #{userId}, #{nickname}, #{avatarUrl}, #{galleryJson}, #{gender}, #{birthday},
+                     #{heightCm}, #{weightKg}, #{city}, #{profession}, #{zodiac}, #{hobbies}, #{drinking}, #{wechat}
+                 )
+            ON DUPLICATE KEY UPDATE
+                                 nickname=VALUES(nickname),
+                                 avatar_url=VALUES(avatar_url),
+                                 gallery_json=VALUES(gallery_json),
+                                 gender=VALUES(gender),
+                                 birthday=VALUES(birthday),
+                                 height_cm=VALUES(height_cm),
+                                 weight_kg=VALUES(weight_kg),
+                                 city=VALUES(city),
+                                 profession=VALUES(profession),
+                                 zodiac=VALUES(zodiac),
+                                 hobbies=VALUES(hobbies),
+                                 drinking=VALUES(drinking),
+                                 wechat=VALUES(wechat)
+    </insert>
+
+    <update id="updateAvatar">
+        UPDATE user_profile SET avatar_url = #{avatarUrl}
+        WHERE user_id = #{userId}
+    </update>
+
+</mapper>
