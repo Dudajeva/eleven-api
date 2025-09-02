@@ -11,6 +11,7 @@
         <result column="gallery_json" property="galleryJson"/>
         <result column="gender"      property="gender"/>
         <result column="birthday"    property="birthday"/>
+        <result column="hide_photos" property="hidePhotos" />
         <result column="height_cm"   property="heightCm"/>
         <result column="weight_kg"   property="weightKg"/>
         <result column="city"        property="city"/>
@@ -22,7 +23,7 @@
     </resultMap>
 
     <select id="findByUserId" parameterType="long" resultMap="UserProfileMap">
-        SELECT user_id, nickname, avatar_url, gallery_json, gender, birthday,
+        SELECT user_id, nickname, avatar_url, gallery_json, gender, birthday,hide_photos,
                height_cm, weight_kg, city, profession, zodiac, hobbies, drinking, wechat
         FROM user_profile
         WHERE user_id = #{userId}
@@ -30,10 +31,10 @@
 
     <insert id="upsert" parameterType="org.adzc.elevenapi.domain.UserProfile">
         INSERT INTO user_profile(
-            user_id, nickname, avatar_url, gallery_json, gender, birthday,
+            user_id, nickname, avatar_url, gallery_json, gender, birthday,hide_photos,
             height_cm, weight_kg, city, profession, zodiac, hobbies, drinking, wechat
         ) VALUES (
-                     #{userId}, #{nickname}, #{avatarUrl}, #{galleryJson}, #{gender}, #{birthday},
+                     #{userId}, #{nickname}, #{avatarUrl}, #{galleryJson}, #{gender}, #{birthday},#{hidePhotos},
                      #{heightCm}, #{weightKg}, #{city}, #{profession}, #{zodiac}, #{hobbies}, #{drinking}, #{wechat}
                  )
             ON DUPLICATE KEY UPDATE
@@ -42,6 +43,7 @@
                                  gallery_json=VALUES(gallery_json),
                                  gender=VALUES(gender),
                                  birthday=VALUES(birthday),
+                                 hide_photos=VALUES(hide_photos),
                                  height_cm=VALUES(height_cm),
                                  weight_kg=VALUES(weight_kg),
                                  city=VALUES(city),
@@ -57,4 +59,11 @@
         WHERE user_id = #{userId}
     </update>
 
+    <!-- 更新隐藏开关 -->
+    <update id="updateHidePhotos">
+        UPDATE user_profile
+        SET hide_photos = #{hide},
+            updated_at = NOW()
+        WHERE user_id = #{uid}
+    </update>
 </mapper>

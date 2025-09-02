@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -69,4 +70,15 @@ public class UserProfileController {
         service.updateAvatar(uid(req), url);
         return url; // 返回可直接展示的 URL
     }
+
+//    @PatchMapping("/hide")
+//    public ResponseEntity<?> setHide(@RequestBody Map<String, Object> body) {
+//        Long uid = uid(); // 你现有的从 JWT 取 uid 的方法
+//        if (uid == null) throw new RuntimeException("Unauthorized: uid not found");
+//
+//        boolean hide = Boolean.TRUE.equals(body.get("hide")) ||
+//                "true".equalsIgnoreCase(String.valueOf(body.get("hide")));
+//        mapper.updateHidePhotos(uid, hide);
+//        return ResponseEntity.ok(Map.of("hide", hide));
+//    }
 }

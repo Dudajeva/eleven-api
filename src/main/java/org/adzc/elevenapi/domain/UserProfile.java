@@ -9,6 +9,7 @@ public class UserProfile {
     private String galleryJson;
     private Integer gender;       // 1男 2女
     private LocalDate birthday;
+    private Boolean hidePhotos;
     private Integer heightCm;
     private Integer weightKg;
     private String city;
@@ -62,4 +63,12 @@ public class UserProfile {
 
     public String getWechat() { return wechat; }
     public void setWechat(String wechat) { this.wechat = wechat; }
+
+    public Boolean getHidePhotos() {
+        return hidePhotos;
+    }
+
+    public void setHidePhotos(Boolean hidePhotos) {
+        this.hidePhotos = hidePhotos;
+    }
 }
