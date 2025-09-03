@@ -48,3 +48,35 @@ CREATE TABLE IF NOT EXISTS user_profile (
     updated_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 快照表：我的页面直接读它
+CREATE TABLE IF NOT EXISTS user_membership (
+                                               id           BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                               user_id      BIGINT NOT NULL UNIQUE,
+                                               tier         VARCHAR(16) NOT NULL DEFAULT 'normal',   -- normal/diamond/supreme
+    start_time   DATETIME NULL,
+    expire_time  DATETIME NULL,
+    invite_left  INT NOT NULL DEFAULT 0,
+    dm_left      INT NOT NULL DEFAULT -1,                 -- -1 = 无限
+    auto_renew   TINYINT(1) NOT NULL DEFAULT 0,
+    status       VARCHAR(16) NOT NULL DEFAULT 'active',   -- active/expired/suspended
+    created_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_um_user FOREIGN KEY (user_id) REFERENCES users(id)
+    );
+-- CREATE INDEX IF NOT EXISTS idx_um_expire ON user_membership (expire_time);
+
+-- 历史周期（先建骨架，后续接收银台/后台使用）
+CREATE TABLE IF NOT EXISTS user_membership_period (
+                                                      id          BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                                      user_id     BIGINT NOT NULL,
+                                                      plan_code   VARCHAR(32) NULL,
+    tier        VARCHAR(16) NOT NULL,
+    start_time  DATETIME NOT NULL,
+    end_time    DATETIME NOT NULL,
+    source      VARCHAR(32) DEFAULT 'admin',              -- admin/stripe/wechat/alipay/gift…
+    status      VARCHAR(16) DEFAULT 'success',
+    created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_ump_user FOREIGN KEY (user_id) REFERENCES users(id),
+    INDEX idx_ump_user_time (user_id, start_time)
+    );
+

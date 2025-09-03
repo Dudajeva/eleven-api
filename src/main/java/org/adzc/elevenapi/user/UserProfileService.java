@@ -34,4 +34,8 @@ public class UserProfileService {
     public void updateAvatar(long userId, String url) {
         mapper.updateAvatar(userId, url);
     }
+
+    public void updateHidePhotos(long userId, boolean hide) {
+        mapper.updateHidePhotos(userId, hide);
+    }
 }

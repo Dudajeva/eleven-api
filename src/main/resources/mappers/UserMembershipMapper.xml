@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.UserMembershipMapper">
+
+    <resultMap id="UserMembershipMap" type="org.adzc.elevenapi.domain.UserMembership">
+        <id     property="id"         column="id"/>
+        <result property="userId"     column="user_id"/>
+        <result property="tier"       column="tier"/>
+        <result property="startTime"  column="start_time"/>
+        <result property="expireTime" column="expire_time"/>
+        <result property="inviteLeft" column="invite_left"/>
+        <result property="dmLeft"     column="dm_left"/>
+        <result property="autoRenew"  column="auto_renew"/>
+        <result property="status"     column="status"/>
+        <result property="createdAt"  column="created_at"/>
+        <result property="updatedAt"  column="updated_at"/>
+    </resultMap>
+
+    <select id="findByUserId" parameterType="long" resultMap="UserMembershipMap">
+        SELECT * FROM user_membership WHERE user_id = #{userId}
+    </select>
+
+    <insert id="insert" parameterType="org.adzc.elevenapi.domain.UserMembership" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user_membership
+        (user_id, tier, start_time, expire_time, invite_left, dm_left, auto_renew, status, created_at, updated_at)
+        VALUES
+            (#{userId}, #{tier}, #{startTime}, #{expireTime}, #{inviteLeft}, #{dmLeft}, #{autoRenew}, #{status}, NOW(), NOW())
+    </insert>
+
+    <update id="update" parameterType="org.adzc.elevenapi.domain.UserMembership">
+        UPDATE user_membership
+        SET tier=#{tier},
+            start_time=#{startTime},
+            expire_time=#{expireTime},
+            invite_left=#{inviteLeft},
+            dm_left=#{dmLeft},
+            auto_renew=#{autoRenew},
+            status=#{status},
+            updated_at=NOW()
+        WHERE user_id=#{userId}
+    </update>
+
+    <!-- MySQL upsert：user_id 唯一约束 -->
+    <insert id="upsertByUserId" parameterType="org.adzc.elevenapi.domain.UserMembership">
+        INSERT INTO user_membership
+        (user_id, tier, start_time, expire_time, invite_left, dm_left, auto_renew, status, created_at, updated_at)
+        VALUES
+            (#{userId}, #{tier}, #{startTime}, #{expireTime}, #{inviteLeft}, #{dmLeft}, #{autoRenew}, #{status}, NOW(), NOW())
+            ON DUPLICATE KEY UPDATE
+                                 tier=VALUES(tier),
+                                 start_time=VALUES(start_time),
+                                 expire_time=VALUES(expire_time),
+                                 invite_left=VALUES(invite_left),
+                                 dm_left=VALUES(dm_left),
+                                 auto_renew=VALUES(auto_renew),
+                                 status=VALUES(status),
+                                 updated_at=NOW()
+    </insert>
+
+</mapper>

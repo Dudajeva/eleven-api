@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -71,14 +72,12 @@ public class UserProfileController {
         return url; // 返回可直接展示的 URL
     }
 
-//    @PatchMapping("/hide")
-//    public ResponseEntity<?> setHide(@RequestBody Map<String, Object> body) {
-//        Long uid = uid(); // 你现有的从 JWT 取 uid 的方法
-//        if (uid == null) throw new RuntimeException("Unauthorized: uid not found");
-//
-//        boolean hide = Boolean.TRUE.equals(body.get("hide")) ||
-//                "true".equalsIgnoreCase(String.valueOf(body.get("hide")));
-//        mapper.updateHidePhotos(uid, hide);
-//        return ResponseEntity.ok(Map.of("hide", hide));
-//    }
+    @PatchMapping("/hide")
+    public ResponseEntity<?> setHidePatch(@RequestBody Map<String, Object> body,HttpServletRequest req) {
+        Long uid = uid(req);
+        boolean hide = Boolean.TRUE.equals(body.get("hide")) ||
+                "true".equalsIgnoreCase(String.valueOf(body.get("hide")));
+        service.updateHidePhotos(uid, hide);
+        return ResponseEntity.ok(Map.of("hide", hide));
+    }
 }
