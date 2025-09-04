@@ -1,7 +1,9 @@
 package org.adzc.elevenapi.auth;
 
 import jakarta.validation.constraints.NotBlank;
+import org.adzc.elevenapi.auth.dto.RegisterRequest;
 import org.adzc.elevenapi.domain.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +33,12 @@ public class AuthController {
         public String identity;
         @NotBlank(message = "password 不能为空")
         public String password;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody RegisterRequest req) {
+        User user = authService.register(req);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/login")

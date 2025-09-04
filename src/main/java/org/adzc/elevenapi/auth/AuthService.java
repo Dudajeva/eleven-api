@@ -2,10 +2,14 @@ package org.adzc.elevenapi.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import org.adzc.elevenapi.auth.dto.RegisterRequest;
 import org.adzc.elevenapi.domain.User;
+import org.adzc.elevenapi.domain.UserProfile;
 import org.adzc.elevenapi.mapper.UserMapper;
+import org.adzc.elevenapi.mapper.UserProfileMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -18,11 +22,14 @@ import java.util.Map;
 public class AuthService {
 
     private final UserMapper userMapper;
+    private final UserProfileMapper userProfileMapper;
+
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder encoder;
 
-    public AuthService(UserMapper userMapper, JwtUtil jwtUtil, BCryptPasswordEncoder encoder) {
+    public AuthService(UserMapper userMapper, UserProfileMapper userProfileMapper,JwtUtil jwtUtil, BCryptPasswordEncoder encoder) {
         this.userMapper = userMapper;
+        this.userProfileMapper = userProfileMapper;
         this.jwtUtil = jwtUtil;
         this.encoder = encoder;
     }
@@ -55,6 +62,31 @@ public class AuthService {
         String subject = user.getIdentity() != null ? user.getIdentity() : norm;
         String token = jwtUtil.generateToken(subject, claims);
         return new LoginResult(token, user);
+    }
+
+    @Transactional
+    public User register(RegisterRequest req) {
+        if (userMapper.findByIdentity(req.getIdentity()) != null) {
+            throw new RuntimeException("用户已存在");
+        }
+
+        User user = new User();
+        user.setIdentity(req.getIdentity());
+        user.setPasswordHash(encoder.encode(req.getPassword()));
+        user.setGender(req.getGender());
+        user.setNickname(req.getNickname() != null ? req.getNickname() : "新用户");
+
+        userMapper.insertUser(user);
+
+        UserProfile profile = new UserProfile();
+        profile.setUserId(user.getId());
+        profile.setNickname(user.getNickname());
+        profile.setGender("male".equalsIgnoreCase(req.getGender()) ? 1 : 2);
+        profile.setHidePhotos(false);
+
+        userProfileMapper.upsert(profile);
+
+        return user;
     }
 
     /** 解析 token */
