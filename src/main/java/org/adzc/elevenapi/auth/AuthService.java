@@ -38,19 +38,23 @@ public class AuthService {
     public static class LoginResult {
         private final String token;
         private final User user;
-        public LoginResult(String token, User user) {
+        private final UserProfile userProfile;
+        public LoginResult(String token, User user,UserProfile userProfile) {
             this.token = token;
             this.user = user;
+            this.userProfile = userProfile;
         }
         public String getToken() { return token; }
         public User getUser() { return user; }
+        public UserProfile getUserProfile() { return userProfile; }
     }
 
     /** 登录：identity（邮箱或手机号），password（明文） */
     public LoginResult login(String identity, String rawPassword) {
         String norm = normalizeIdentity(identity);
         User user = userMapper.findByIdentity(norm);
-        if (user == null || !encoder.matches(safe(rawPassword), user.getPasswordHash())) {
+        UserProfile userProfile = userProfileMapper.findByUserId(user.getId());
+        if (user == null ||userProfile == null || !encoder.matches(safe(rawPassword), user.getPasswordHash())) {
             throw new IllegalArgumentException("用户名或密码错误");
         }
 
@@ -61,7 +65,7 @@ public class AuthService {
 
         String subject = user.getIdentity() != null ? user.getIdentity() : norm;
         String token = jwtUtil.generateToken(subject, claims);
-        return new LoginResult(token, user);
+        return new LoginResult(token, user,userProfile);
     }
 
     @Transactional
@@ -83,6 +87,7 @@ public class AuthService {
         profile.setNickname(user.getNickname());
         profile.setGender("male".equalsIgnoreCase(req.getGender()) ? 1 : 2);
         profile.setHidePhotos(false);
+        profile.setFirstLogin(true);
 
         userProfileMapper.upsert(profile);
 

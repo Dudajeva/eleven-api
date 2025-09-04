@@ -3,6 +3,7 @@ package org.adzc.elevenapi.auth;
 import jakarta.validation.constraints.NotBlank;
 import org.adzc.elevenapi.auth.dto.RegisterRequest;
 import org.adzc.elevenapi.domain.User;
+import org.adzc.elevenapi.domain.UserProfile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,7 @@ public class AuthController {
         try {
             AuthService.LoginResult r = authService.login(req.identity, req.password);
             User u = r.getUser();
+            UserProfile userProfile = r.getUserProfile();
 
             Map<String, Object> resp = new HashMap<>();
             resp.put("token", r.getToken());
@@ -58,6 +60,7 @@ public class AuthController {
                     : (u.getPhone() != null ? u.getPhone() : req.identity);
             resp.put("identity", idVal);
             resp.put("nickname", u.getNickname());
+            resp.put("firstLogin",userProfile.getFirstLogin());
             // 性别这轮先不返回；后续需要时可加 resp.put("gender", u.getGender());
             return resp;
 

@@ -28,6 +28,7 @@ public class UserProfileService {
     public void save(UserProfile p) {
         if (p.getUserId() == null) throw new IllegalArgumentException("userId is required");
         if (p.getNickname() == null) p.setNickname("");
+        p.setFirstLogin(false);
         mapper.upsert(p);
     }
 

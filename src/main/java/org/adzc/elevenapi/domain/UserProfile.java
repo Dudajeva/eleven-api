@@ -18,6 +18,7 @@ public class UserProfile {
     private String hobbies;       // JSON 字符串
     private String drinking;      // 经常喝/偶尔喝/不喝酒
     private String wechat;
+    private Boolean firstLogin;
 
     public UserProfile() {}
 
@@ -70,5 +71,13 @@ public class UserProfile {
 
     public void setHidePhotos(Boolean hidePhotos) {
         this.hidePhotos = hidePhotos;
+    }
+
+    public Boolean getFirstLogin() {
+        return firstLogin;
+    }
+
+    public void setFirstLogin(Boolean firstLogin) {
+        this.firstLogin = firstLogin;
     }
 }

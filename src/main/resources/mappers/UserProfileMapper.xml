@@ -20,11 +20,12 @@
         <result column="hobbies"     property="hobbies"/>
         <result column="drinking"    property="drinking"/>
         <result column="wechat"      property="wechat"/>
+        <result column="first_login"      property="firstLogin"/>
     </resultMap>
 
     <select id="findByUserId" parameterType="long" resultMap="UserProfileMap">
         SELECT user_id, nickname, avatar_url, gallery_json, gender, birthday,hide_photos,
-               height_cm, weight_kg, city, profession, zodiac, hobbies, drinking, wechat
+               height_cm, weight_kg, city, profession, zodiac, hobbies, drinking, wechat,first_login
         FROM user_profile
         WHERE user_id = #{userId}
     </select>
@@ -32,10 +33,10 @@
     <insert id="upsert" parameterType="org.adzc.elevenapi.domain.UserProfile">
         INSERT INTO user_profile(
             user_id, nickname, avatar_url, gallery_json, gender, birthday,hide_photos,
-            height_cm, weight_kg, city, profession, zodiac, hobbies, drinking, wechat
+            height_cm, weight_kg, city, profession, zodiac, hobbies, drinking, wechat,first_login
         ) VALUES (
                      #{userId}, #{nickname}, #{avatarUrl}, #{galleryJson}, #{gender}, #{birthday},#{hidePhotos},
-                     #{heightCm}, #{weightKg}, #{city}, #{profession}, #{zodiac}, #{hobbies}, #{drinking}, #{wechat}
+                     #{heightCm}, #{weightKg}, #{city}, #{profession}, #{zodiac}, #{hobbies}, #{drinking}, #{wechat}, #{firstLogin}
                  )
             ON DUPLICATE KEY UPDATE
                                  nickname=VALUES(nickname),
@@ -51,7 +52,8 @@
                                  zodiac=VALUES(zodiac),
                                  hobbies=VALUES(hobbies),
                                  drinking=VALUES(drinking),
-                                 wechat=VALUES(wechat)
+                                 wechat=VALUES(wechat),
+                                 first_login=VALUES(first_login)
     </insert>
 
     <update id="updateAvatar">

@@ -1,5 +1,6 @@
 package org.adzc.elevenapi.user;
 
+import org.adzc.elevenapi.auth.CurrentUid;
 import org.adzc.elevenapi.domain.UserProfile;
 import org.springframework.http.MediaType;
 import org.springframework.util.unit.DataSize;
@@ -22,36 +23,21 @@ public class UserProfileController {
         this.service = service;
     }
 
-    /** 从请求中取 uid：你已有 JWT 过滤器可把 uid 放到 request attribute；否则用开发兜底 X-UID 头 */
-    private long uid(HttpServletRequest req) {
-        Object v = req.getAttribute("auth.uid"); // ✅ 与过滤器一致
-        if (v instanceof Number) return ((Number) v).longValue();
-        if (v != null) return Long.parseLong(String.valueOf(v));
-
-        Object v2 = req.getAttribute("uid");
-        if (v2 instanceof Number) return ((Number) v2).longValue();
-        if (v2 != null) return Long.parseLong(String.valueOf(v2));
-
-        String hdr = req.getHeader("X-UID");
-        if (hdr != null && !hdr.isBlank()) return Long.parseLong(hdr);
-
-        throw new RuntimeException("Unauthorized: uid not found");
-    }
 
     @GetMapping("/me")
-    public UserProfile me(HttpServletRequest req) {
-        return service.getOrInit(uid(req));
+    public UserProfile me(@CurrentUid Long uid) {
+        return service.getOrInit(uid);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String update(@RequestBody UserProfile body, HttpServletRequest req) {
-        body.setUserId(uid(req));
+    public String update(@RequestBody UserProfile body,@CurrentUid Long uid) {
+        body.setUserId(uid);
         service.save(body);
         return "OK";
     }
 
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String uploadAvatar(@RequestParam("file") MultipartFile file, HttpServletRequest req) throws Exception {
+    public String uploadAvatar(@RequestParam("file") MultipartFile file, HttpServletRequest req,@CurrentUid Long uid) throws Exception {
         if (file.isEmpty()) throw new RuntimeException("空文件");
         if (file.getSize() > DataSize.ofMegabytes(8).toBytes()) throw new RuntimeException("文件过大(>8MB)");
 
@@ -63,18 +49,17 @@ public class UserProfileController {
         if ("image/png".equals(ct))  ext = ".png";
         if ("image/jpeg".equals(ct)) ext = ".jpg";
 
-        String name = uid(req) + "-" + LocalDateTime.now().toString().replace(":", "-") + ext;
+        String name = uid + "-" + LocalDateTime.now().toString().replace(":", "-") + ext;
         File dest = new File(dir, name);
         file.transferTo(dest);
 
         String url = "/uploads/avatar/" + name;
-        service.updateAvatar(uid(req), url);
+        service.updateAvatar(uid, url);
         return url; // 返回可直接展示的 URL
     }
 
     @PatchMapping("/hide")
-    public ResponseEntity<?> setHidePatch(@RequestBody Map<String, Object> body,HttpServletRequest req) {
-        Long uid = uid(req);
+    public ResponseEntity<?> setHidePatch(@RequestBody Map<String, Object> body,@CurrentUid Long uid) {
         boolean hide = Boolean.TRUE.equals(body.get("hide")) ||
                 "true".equalsIgnoreCase(String.valueOf(body.get("hide")));
         service.updateHidePhotos(uid, hide);
