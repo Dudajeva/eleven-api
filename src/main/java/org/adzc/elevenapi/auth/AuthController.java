@@ -20,7 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @Validated
-@CrossOrigin(origins = "*") // 开发期放开，生产记得收紧
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final AuthService authService;
@@ -51,7 +51,7 @@ public class AuthController {
 
             Map<String, Object> resp = new HashMap<>();
             resp.put("token", r.getToken());
-            resp.put("userId", "u_" + u.getId());
+            resp.put("userId", u.getId());
             // 统一回传“登录用的 identity”（邮箱优先，否则手机号；若两者皆空则回请求值）
             String idVal = (u.getIdentity() != null && !u.getIdentity().isBlank())
                     ? u.getIdentity()

@@ -80,3 +80,13 @@ CREATE TABLE IF NOT EXISTS user_membership_period (
     INDEX idx_ump_user_time (user_id, start_time)
     );
 
+
+CREATE TABLE IF NOT EXISTS app_config (
+                            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                            cfg_key   VARCHAR(100) NOT NULL UNIQUE,
+                            cfg_value VARCHAR(500) NOT NULL,
+                            remark    VARCHAR(255) NULL,
+                            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+

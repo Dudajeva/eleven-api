@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.adzc.elevenapi.mapper.AppConfigMapper">
+
+    <!-- 通用结果映射 -->
+    <resultMap id="AppConfigResultMap" type="org.adzc.elevenapi.domain.AppConfig">
+        <id column="id" property="id"/>
+        <result column="cfg_key" property="cfgKey"/>
+        <result column="cfg_value" property="cfgValue"/>
+        <result column="remark" property="remark"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <!-- 查询单条（按主键ID） -->
+    <select id="selectById" resultMap="AppConfigResultMap">
+        SELECT id, cfg_key, cfg_value, remark, updated_at
+        FROM app_config
+        WHERE id = #{id}
+    </select>
+
+    <!-- 查询单条（按cfg_key） -->
+    <select id="selectByKey" resultMap="AppConfigResultMap">
+        SELECT id, cfg_key, cfg_value, remark, updated_at
+        FROM app_config
+        WHERE cfg_key = #{cfgKey}
+    </select>
+
+    <!-- 查询全部 -->
+    <select id="selectAll" resultMap="AppConfigResultMap">
+        SELECT id, cfg_key, cfg_value, remark, updated_at
+        FROM app_config
+        ORDER BY updated_at DESC
+    </select>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="org.adzc.elevenapi.domain.AppConfig" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO app_config (cfg_key, cfg_value, remark)
+        VALUES (#{cfgKey}, #{cfgValue}, #{remark})
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="org.adzc.elevenapi.domain.AppConfig">
+        UPDATE app_config
+        SET cfg_key = #{cfgKey},
+            cfg_value = #{cfgValue},
+            remark = #{remark}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM app_config WHERE id = #{id}
+    </delete>
+
+</mapper>
