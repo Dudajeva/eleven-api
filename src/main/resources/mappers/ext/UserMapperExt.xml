@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.UserMapper">
+
+    <select id="findByIdentity" parameterType="string" resultMap="BaseResultMap">
+        SELECT *
+        FROM user
+        WHERE identity = #{identity}
+        LIMIT 1
+    </select>
+
+
+    <select id="countUsers" resultType="long">
+        SELECT COUNT(*) FROM user
+    </select>
+
+    <!-- 首页 Feed：为避免敏感字段外泄，显式列字段并做别名 -->
+    <select id="selectUserCards" resultType="org.adzc.elevenapi.feed.UserCard">
+        SELECT
+        u.id,
+        up.nickname        AS name,
+        up.age             AS age,
+        up.gender          AS gender,
+        up.province        AS province,
+        up.city            AS city,
+        u.tier            AS tier,
+        u.photo_url       AS photoUrl
+        FROM user u
+        join user_profile up on u.id=up.user_id
+        ORDER BY u.updated_at DESC, u.id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAllForFeed" resultType="long">
+        SELECT COUNT(*) FROM user
+    </select>
+
+    <!-- 带省市筛选的分页查询 -->
+    <select id="selectUserCardsFiltered" resultType="org.adzc.elevenapi.feed.UserCard">
+        SELECT
+        id,
+        nickname   AS name,
+        age        AS age,
+        gender          AS gender,
+        province        AS province,
+        city       AS city,
+        tier       AS tier,
+        photo_url  AS photoUrl
+        FROM user
+        <where>
+            <if test="province != null and province != ''">
+                AND province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                AND city = #{city}
+            </if>
+        </where>
+        ORDER BY updated_at DESC, id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countForFeedFiltered" resultType="long">
+        SELECT COUNT(*) FROM user
+        <where>
+            <if test="province != null and province != ''">
+                AND province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                AND city = #{city}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByEmail" parameterType="string" resultMap="BaseResultMap">
+        SELECT *
+        FROM user
+        WHERE email = #{email}
+        LIMIT 1
+    </select>
+
+    <select id="selectByPhone" parameterType="string" resultMap="BaseResultMap">
+        SELECT *
+        FROM user
+        WHERE phone = #{phone}
+        LIMIT 1
+    </select>
+
+</mapper>

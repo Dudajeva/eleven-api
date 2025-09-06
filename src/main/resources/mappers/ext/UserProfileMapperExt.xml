@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.UserProfileMapper">
+
+
+    <update id="updateAvatar">
+        UPDATE user_profile SET avatar_url = #{avatarUrl}
+        WHERE user_id = #{userId}
+    </update>
+
+    <!-- 更新隐藏开关 -->
+    <update id="updateHidePhotos">
+        UPDATE user_profile
+        SET hide_photos = #{hide},
+            updated_at = NOW()
+        WHERE user_id = #{uid}
+    </update>
+</mapper>

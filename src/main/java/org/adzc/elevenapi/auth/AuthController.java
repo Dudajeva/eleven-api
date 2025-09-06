@@ -45,21 +45,21 @@ public class AuthController {
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody @Validated LoginRequest req) {
         try {
-            AuthService.LoginResult r = authService.login(req.identity, req.password);
-            User u = r.getUser();
-            UserProfile userProfile = r.getUserProfile();
+            AuthService.LoginResult result = authService.login(req.identity, req.password);
+            User user = result.getUser();
+            UserProfile userProfile = result.getUserProfile();
 
             Map<String, Object> resp = new HashMap<>();
-            resp.put("token", r.getToken());
-            resp.put("userId", u.getId());
+            resp.put("token", result.getToken());
+            resp.put("userId", user.getId());
             // 统一回传“登录用的 identity”（邮箱优先，否则手机号；若两者皆空则回请求值）
-            String idVal = (u.getIdentity() != null && !u.getIdentity().isBlank())
-                    ? u.getIdentity()
-                    : (u.getEmail() != null && !u.getEmail().isBlank())
-                    ? u.getEmail()
-                    : (u.getPhone() != null ? u.getPhone() : req.identity);
+            String idVal = (user.getIdentity() != null && !user.getIdentity().isBlank())
+                    ? user.getIdentity()
+                    : (user.getEmail() != null && !user.getEmail().isBlank())
+                    ? user.getEmail()
+                    : (user.getPhone() != null ? user.getPhone() : req.identity);
             resp.put("identity", idVal);
-            resp.put("nickname", u.getNickname());
+            resp.put("nickname", userProfile.getNickname());
             resp.put("firstLogin",userProfile.getFirstLogin());
             // 性别这轮先不返回；后续需要时可加 resp.put("gender", u.getGender());
             return resp;

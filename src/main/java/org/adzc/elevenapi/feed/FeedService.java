@@ -2,6 +2,7 @@ package org.adzc.elevenapi.feed;
 
 import org.adzc.elevenapi.common.PageResult;
 import org.adzc.elevenapi.mapper.UserMapper;
+import org.adzc.elevenapi.mapper.UserProfileMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +12,11 @@ public class FeedService {
 
     private final UserMapper userMapper;
 
-    public FeedService(UserMapper userMapper) {
+    private final UserProfileMapper userProfileMapper;
+
+    public FeedService(UserMapper userMapper,UserProfileMapper userProfileMapper) {
         this.userMapper = userMapper;
+        this.userProfileMapper = userProfileMapper;
     }
 
     public List<UserCard> list(int page, int size, String province, String city) {

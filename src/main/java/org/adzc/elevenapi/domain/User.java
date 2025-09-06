@@ -1,72 +1,96 @@
 package org.adzc.elevenapi.domain;
 
-import jakarta.validation.constraints.NotBlank;
 
-/**
- * 用户实体，对应表 users
- */
+import java.time.LocalDate;
+
 public class User {
-
     private Long id;
 
-    @NotBlank
-    private String identity;       // 邮箱或手机号（登录唯一）
+    private String identity;
 
     private String email;
+
     private String phone;
-    private String gender;
 
-    @NotBlank
-    private String passwordHash;   // BCrypt
+    private String passwordHash;
 
-    @NotBlank
-    private String nickname;
+    private String tier;
 
-    private Integer age;
-    private String province;
-    private String city;
-    private String tier;           // normal/diamond/supreme
     private String photoUrl;
 
-    // getter/setter 省略可用 Lombok，这里手写以免你未装 Lombok
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    private LocalDate createdAt;
 
-    public String getGender() {
-        return gender;
+    private LocalDate updatedAt;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getIdentity() { return identity; }
-    public void setIdentity(String identity) { this.identity = identity; }
+    public String getIdentity() {
+        return identity;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setIdentity(String identity) {
+        this.identity = identity;
+    }
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
+    public String getEmail() {
+        return email;
+    }
 
-    public String getPasswordHash() { return passwordHash; }
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getNickname() { return nickname; }
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public String getPhone() {
+        return phone;
+    }
 
-    public Integer getAge() { return age; }
-    public void setAge(Integer age) { this.age = age; }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-    public String getProvince() { return province; }
-    public void setProvince(String province) { this.province = province; }
+    public String getPasswordHash() {
+        return passwordHash;
+    }
 
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 
-    public String getTier() { return tier; }
-    public void setTier(String tier) { this.tier = tier; }
+    public String getTier() {
+        return tier;
+    }
 
-    public String getPhotoUrl() { return photoUrl; }
-    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+    public void setTier(String tier) {
+        this.tier = tier;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDate updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

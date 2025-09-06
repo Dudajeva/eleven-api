@@ -4,66 +4,162 @@ import java.time.LocalDate;
 
 public class UserProfile {
     private Long userId;
+
     private String nickname;
+
     private String avatarUrl;
-    private String galleryJson;
-    private Integer gender;       // 1男 2女
+
+    private int gender;
+
+    private Integer age;
+
     private LocalDate birthday;
-    private Boolean hidePhotos;
-    private Integer heightCm;
-    private Integer weightKg;
+
+    private Short heightCm;
+
+    private Short weightKg;
+
+    private String province;
+
     private String city;
+
     private String profession;
+
     private String zodiac;
-    private String hobbies;       // JSON 字符串
-    private String drinking;      // 经常喝/偶尔喝/不喝酒
+
+    private String drinking;
+
     private String wechat;
+
+    private LocalDate updatedAt;
+
+    private Boolean hidePhotos;
+
     private Boolean firstLogin;
 
-    public UserProfile() {}
+    private String galleryJson;
 
-    // getter / setter
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    private String hobbies;
 
-    public String getNickname() { return nickname; }
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public Long getUserId() {
+        return userId;
+    }
 
-    public String getAvatarUrl() { return avatarUrl; }
-    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-    public String getGalleryJson() { return galleryJson; }
-    public void setGalleryJson(String galleryJson) { this.galleryJson = galleryJson; }
+    public String getNickname() {
+        return nickname;
+    }
 
-    public Integer getGender() { return gender; }
-    public void setGender(Integer gender) { this.gender = gender; }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
-    public LocalDate getBirthday() { return birthday; }
-    public void setBirthday(LocalDate birthday) { this.birthday = birthday; }
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
 
-    public Integer getHeightCm() { return heightCm; }
-    public void setHeightCm(Integer heightCm) { this.heightCm = heightCm; }
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
 
-    public Integer getWeightKg() { return weightKg; }
-    public void setWeightKg(Integer weightKg) { this.weightKg = weightKg; }
+    public int getGender() {
+        return gender;
+    }
 
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
 
-    public String getProfession() { return profession; }
-    public void setProfession(String profession) { this.profession = profession; }
+    public Integer getAge() {
+        return age;
+    }
 
-    public String getZodiac() { return zodiac; }
-    public void setZodiac(String zodiac) { this.zodiac = zodiac; }
+    public void setAge(Integer age) {
+        this.age = age;
+    }
 
-    public String getHobbies() { return hobbies; }
-    public void setHobbies(String hobbies) { this.hobbies = hobbies; }
+    public LocalDate getBirthday() {
+        return birthday;
+    }
 
-    public String getDrinking() { return drinking; }
-    public void setDrinking(String drinking) { this.drinking = drinking; }
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
 
-    public String getWechat() { return wechat; }
-    public void setWechat(String wechat) { this.wechat = wechat; }
+    public Short getHeightCm() {
+        return heightCm;
+    }
+
+    public void setHeightCm(Short heightCm) {
+        this.heightCm = heightCm;
+    }
+
+    public Short getWeightKg() {
+        return weightKg;
+    }
+
+    public void setWeightKg(Short weightKg) {
+        this.weightKg = weightKg;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getProfession() {
+        return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = profession;
+    }
+
+    public String getZodiac() {
+        return zodiac;
+    }
+
+    public void setZodiac(String zodiac) {
+        this.zodiac = zodiac;
+    }
+
+    public String getDrinking() {
+        return drinking;
+    }
+
+    public void setDrinking(String drinking) {
+        this.drinking = drinking;
+    }
+
+    public String getWechat() {
+        return wechat;
+    }
+
+    public void setWechat(String wechat) {
+        this.wechat = wechat;
+    }
+
+    public LocalDate getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDate updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     public Boolean getHidePhotos() {
         return hidePhotos;
@@ -79,5 +175,21 @@ public class UserProfile {
 
     public void setFirstLogin(Boolean firstLogin) {
         this.firstLogin = firstLogin;
+    }
+
+    public String getGalleryJson() {
+        return galleryJson;
+    }
+
+    public void setGalleryJson(String galleryJson) {
+        this.galleryJson = galleryJson;
+    }
+
+    public String getHobbies() {
+        return hobbies;
+    }
+
+    public void setHobbies(String hobbies) {
+        this.hobbies = hobbies;
     }
 }

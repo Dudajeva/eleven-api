@@ -1,110 +1,52 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.adzc.elevenapi.mapper.UserMapper">
-
-    <resultMap id="UserMap" type="org.adzc.elevenapi.domain.User">
-        <id column="id" property="id"/>
-        <result column="identity" property="identity"/>
-        <result column="email" property="email"/>
-        <result column="phone" property="phone"/>
-        <result column="password_hash" property="passwordHash"/>
-        <result column="nickname" property="nickname"/>
-        <result column="age" property="age"/>
-        <result column="gender" property="gender"/>
-        <result column="province" property="province"/>
-        <result column="city" property="city"/>
-        <result column="tier" property="tier"/>
-        <result column="photo_url" property="photoUrl"/>
-    </resultMap>
-
-    <select id="findByIdentity" parameterType="string" resultMap="UserMap">
-        SELECT *
-        FROM users
-        WHERE identity = #{identity}
-        LIMIT 1
-    </select>
-
-    <insert id="insertUser" parameterType="org.adzc.elevenapi.domain.User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users
-        (identity, email, phone, password_hash, nickname, age,gender,province, city, tier, photo_url)
-        VALUES
-        (#{identity}, #{email}, #{phone}, #{passwordHash}, #{nickname}, #{age}, #{gender},#{province}, #{city}, #{tier}, #{photoUrl})
-    </insert>
-
-    <select id="countUsers" resultType="long">
-        SELECT COUNT(*) FROM users
-    </select>
-
-    <!-- 首页 Feed：为避免敏感字段外泄，显式列字段并做别名 -->
-    <select id="selectUserCards" resultType="org.adzc.elevenapi.feed.UserCard">
-        SELECT
-        id,
-        nickname        AS name,
-        age             AS age,
-        gender          AS gender,
-        province        AS province,
-        city            AS city,
-        tier            AS tier,
-        photo_url       AS photoUrl
-        FROM users
-        ORDER BY updated_at DESC, id DESC
-        LIMIT #{limit} OFFSET #{offset}
-    </select>
-
-    <select id="countAllForFeed" resultType="long">
-        SELECT COUNT(*) FROM users
-    </select>
-
-    <!-- 带省市筛选的分页查询 -->
-    <select id="selectUserCardsFiltered" resultType="org.adzc.elevenapi.feed.UserCard">
-        SELECT
-        id,
-        nickname   AS name,
-        age        AS age,
-        gender          AS gender,
-        province        AS province,
-        city       AS city,
-        tier       AS tier,
-        photo_url  AS photoUrl
-        FROM users
-        <where>
-            <if test="province != null and province != ''">
-                AND province = #{province}
-            </if>
-            <if test="city != null and city != ''">
-                AND city = #{city}
-            </if>
-        </where>
-        ORDER BY updated_at DESC, id DESC
-        LIMIT #{limit} OFFSET #{offset}
-    </select>
-
-    <select id="countForFeedFiltered" resultType="long">
-        SELECT COUNT(*) FROM users
-        <where>
-            <if test="province != null and province != ''">
-                AND province = #{province}
-            </if>
-            <if test="city != null and city != ''">
-                AND city = #{city}
-            </if>
-        </where>
-    </select>
-
-    <select id="selectByEmail" parameterType="string" resultMap="UserMap">
-        SELECT *
-        FROM users
-        WHERE email = #{email}
-        LIMIT 1
-    </select>
-
-    <select id="selectByPhone" parameterType="string" resultMap="UserMap">
-        SELECT *
-        FROM users
-        WHERE phone = #{phone}
-        LIMIT 1
-    </select>
-
+  <resultMap id="BaseResultMap" type="org.adzc.elevenapi.domain.User">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="identity" jdbcType="VARCHAR" property="identity" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="password_hash" jdbcType="VARCHAR" property="passwordHash" />
+    <result column="tier" jdbcType="VARCHAR" property="tier" />
+    <result column="photo_url" jdbcType="VARCHAR" property="photoUrl" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.adzc.elevenapi.domain.User">
+    insert into user (id, `identity`, email,
+      phone, password_hash, tier, 
+      photo_url, created_at, updated_at
+      )
+    values (#{id,jdbcType=BIGINT}, #{identity,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{passwordHash,jdbcType=VARCHAR}, #{tier,jdbcType=VARCHAR}, 
+      #{photoUrl,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.User">
+    update user
+    set `identity` = #{identity,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      password_hash = #{passwordHash,jdbcType=VARCHAR},
+      tier = #{tier,jdbcType=VARCHAR},
+      photo_url = #{photoUrl,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, `identity`, email, phone, password_hash, tier, photo_url, created_at, 
+    updated_at
+    from eleven..user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, `identity`, email, phone, password_hash, tier, photo_url, created_at, 
+    updated_at
+    from eleven..user
+  </select>
 </mapper>

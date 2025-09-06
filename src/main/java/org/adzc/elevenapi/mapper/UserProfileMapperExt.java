@@ -1,25 +1,14 @@
 package org.adzc.elevenapi.mapper;
 
-import java.util.List;
 import org.adzc.elevenapi.domain.UserProfile;
-import org.adzc.elevenapi.feed.UserCard;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 @Mapper
-public interface UserProfileMapper {
-    int deleteByPrimaryKey(Long userId);
-
-    int insert(UserProfile row);
-
-    UserProfile selectByPrimaryKey(Long userId);
-
-    List<UserProfile> selectAll();
-
-    int updateByPrimaryKey(UserProfile row);
-
+public interface UserProfileMapperExt {
+    UserProfile findByUserId(@Param("userId") Long userId);
+    int upsert(UserProfile profile);
     int updateAvatar(@Param("userId") Long userId, @Param("avatarUrl") String avatarUrl);
 
     int updateHidePhotos(@Param("uid") Long uid, @Param("hide") boolean hide); // 新增
-
 }

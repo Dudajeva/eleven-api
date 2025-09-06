@@ -1,18 +1,25 @@
 package org.adzc.elevenapi.mapper;
 
+import java.util.List;
 import org.adzc.elevenapi.domain.User;
 import org.adzc.elevenapi.feed.UserCard;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
-
 @Mapper
 public interface UserMapper {
+    int deleteByPrimaryKey(Long id);
+
+    int insert(User row);
+
+    User selectByPrimaryKey(Long id);
+
+    List<User> selectAll();
+
+    int updateByPrimaryKey(User row);
+
 
     User findByIdentity(@Param("identity") String identity);
-
-    int insertUser(User user);
 
     long countUsers();
 
@@ -30,9 +37,4 @@ public interface UserMapper {
 
     long countForFeedFiltered(@Param("province") String province,
                               @Param("city") String city);
-
-
-    User selectByEmail(@Param("email") String email);
-
-    User selectByPhone(@Param("phone") String phone);
 }
