@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.FeedPostMapper">
+    <select id="list" resultType="org.adzc.elevenapi.feed.dto.FeedItemDTO">
+        SELECT
+        p.id,
+        up.nickname,
+        up.avatar_url AS avatarUrl,
+        CASE
+        WHEN up.birthday IS NULL THEN NULL
+        ELSE TIMESTAMPDIFF(YEAR, up.birthday, CURDATE())
+        END AS age,
+        up.province,
+        up.city,
+        um.tier,
+        p.text,
+        p.photo_url AS photoUrl,
+        COALESCE(l.cnt, 0) AS likeCount,
+        CASE WHEN ul.user_id IS NULL THEN FALSE ELSE TRUE END AS liked
+        FROM feed_post p
+        JOIN user_profile up ON up.user_id = p.user_id
+        LEFT JOIN user_membership um ON um.user_id = p.user_id
+        LEFT JOIN (
+        SELECT post_id, COUNT(*) AS cnt
+        FROM feed_like
+        GROUP BY post_id
+        ) l ON l.post_id = p.id
+        LEFT JOIN feed_like ul
+        ON ul.post_id = p.id AND ul.user_id = #{viewerId}
+        <where>
+            <if test="province != null and province != ''">
+                AND up.province = #{province}
+            </if>
+            <if test="city != null and city != ''">
+                AND up.city = #{city}
+            </if>
+        </where>
+        ORDER BY p.id DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+</mapper>

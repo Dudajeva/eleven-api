@@ -1,48 +1,47 @@
 package org.adzc.elevenapi.feed;
 
-import org.adzc.elevenapi.common.PageResult;
-import org.adzc.elevenapi.mapper.UserMapper;
-import org.adzc.elevenapi.mapper.UserProfileMapper;
+
+import lombok.RequiredArgsConstructor;
+import org.adzc.elevenapi.domain.FeedLike;
+import org.adzc.elevenapi.domain.FeedPost;
+import org.adzc.elevenapi.feed.dto.FeedItemDTO;
+import org.adzc.elevenapi.mapper.FeedLikeMapper;
+import org.adzc.elevenapi.mapper.FeedPostMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class FeedService {
 
-    private final UserMapper userMapper;
+    private final FeedPostMapper postMapper;
+    private final FeedLikeMapper likeMapper;
 
-    private final UserProfileMapper userProfileMapper;
-
-    public FeedService(UserMapper userMapper,UserProfileMapper userProfileMapper) {
-        this.userMapper = userMapper;
-        this.userProfileMapper = userProfileMapper;
+    public List<FeedItemDTO> list(Long viewerId, int offset, int size, String province, String city) {
+        return postMapper.list(viewerId, offset, size, province, city);
     }
 
-    public List<UserCard> list(int page, int size, String province, String city) {
-        int p = Math.max(page, 1);
-        int s = Math.max(Math.min(size, 100), 1);
-        int offset = (p - 1) * s;
-        if ((province == null || province.isBlank()) && (city == null || city.isBlank())) {
-            return userMapper.selectUserCards(s, offset);
-        }
-        return userMapper.selectUserCardsFiltered(s, offset, province, city);
+    @Transactional
+    public void create(Long userId, String text, String photoUrl) {
+        FeedPost feedPost = new FeedPost();
+        feedPost.setUserId(userId);
+        feedPost.setText(text);
+        feedPost.setPhotoUrl(photoUrl);
+        postMapper.insert(feedPost);
     }
 
-    public PageResult<UserCard> page(int page, int size, String province, String city) {
-        int p = Math.max(page, 1);
-        int s = Math.max(Math.min(size, 100), 1);
-        int offset = (p - 1) * s;
+    @Transactional
+    public void like(Long userId, Long postId) {
+        FeedLike feedLike = new FeedLike();
+        feedLike.setUserId(userId);
+        feedLike.setPostId(postId);
+        likeMapper.insert(feedLike);
+    }
 
-        List<UserCard> list;
-        long total;
-        if ((province == null || province.isBlank()) && (city == null || city.isBlank())) {
-            list = userMapper.selectUserCards(s, offset);
-            total = userMapper.countAllForFeed();
-        } else {
-            list = userMapper.selectUserCardsFiltered(s, offset, province, city);
-            total = userMapper.countForFeedFiltered(province, city);
-        }
-        return new PageResult<>(list, p, s, total);
+    @Transactional
+    public void unlike(Long userId, Long postId) {
+        likeMapper.deleteLike(userId, postId);
     }
 }

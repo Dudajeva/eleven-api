@@ -17,7 +17,7 @@
     </select>
 
     <!-- 首页 Feed：为避免敏感字段外泄，显式列字段并做别名 -->
-    <select id="selectUserCards" resultType="org.adzc.elevenapi.feed.UserCard">
+    <select id="selectUserCards" resultType="org.adzc.elevenapi.home.dto.UserCard">
         SELECT
         u.id,
         up.nickname        AS name,
@@ -26,9 +26,10 @@
         up.province        AS province,
         up.city            AS city,
         u.tier            AS tier,
-        u.photo_url       AS photoUrl
+        up.photo_url       AS photoUrl
         FROM user u
         join user_profile up on u.id=up.user_id
+        WHERE u.id &lt;&gt; #{userId}
         ORDER BY u.updated_at DESC, u.id DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
@@ -38,18 +39,20 @@
     </select>
 
     <!-- 带省市筛选的分页查询 -->
-    <select id="selectUserCardsFiltered" resultType="org.adzc.elevenapi.feed.UserCard">
+    <select id="selectUserCardsFiltered" resultType="org.adzc.elevenapi.home.dto.UserCard">
         SELECT
-        id,
-        nickname   AS name,
-        age        AS age,
-        gender          AS gender,
-        province        AS province,
-        city       AS city,
-        tier       AS tier,
-        photo_url  AS photoUrl
-        FROM user
+        u.id,
+        up.nickname        AS name,
+        up.age             AS age,
+        up.gender          AS gender,
+        up.province        AS province,
+        up.city            AS city,
+        u.tier            AS tier,
+        up.photo_url       AS photoUrl
+        FROM user u
+        join user_profile up on u.id=up.user_id
         <where>
+            u.id &lt;&gt; #{userId}
             <if test="province != null and province != ''">
                 AND province = #{province}
             </if>
@@ -57,7 +60,7 @@
                 AND city = #{city}
             </if>
         </where>
-        ORDER BY updated_at DESC, id DESC
+        ORDER BY u.updated_at DESC, u.id DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 

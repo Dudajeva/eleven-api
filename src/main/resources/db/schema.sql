@@ -89,4 +89,22 @@ CREATE TABLE IF NOT EXISTS app_config (
                             updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- 动态主表
+CREATE TABLE feed_post (
+                           id           BIGINT PRIMARY KEY AUTO_INCREMENT,
+                           user_id      BIGINT      NOT NULL,
+                           text         VARCHAR(1000) DEFAULT NULL,
+                           photo_url    VARCHAR(512)  DEFAULT NULL,
+                           created_at   TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 点赞表（去重约束：同一用户对同一条只能点一次）
+CREATE TABLE feed_like (
+                           id         BIGINT PRIMARY KEY AUTO_INCREMENT,
+                           post_id    BIGINT NOT NULL,
+                           user_id    BIGINT NOT NULL,
+                           created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                           UNIQUE KEY uk_post_user (post_id, user_id),
+                           KEY idx_post (post_id),
+                           KEY idx_user (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

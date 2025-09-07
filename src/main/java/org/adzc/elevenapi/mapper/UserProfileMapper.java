@@ -2,7 +2,6 @@ package org.adzc.elevenapi.mapper;
 
 import java.util.List;
 import org.adzc.elevenapi.domain.UserProfile;
-import org.adzc.elevenapi.feed.UserCard;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

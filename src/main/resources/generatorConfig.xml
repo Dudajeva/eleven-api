@@ -23,9 +23,10 @@
                              targetPackage="org.adzc.elevenapi.mapper"
                              targetProject="src/main/java"/>
 
-        <!-- 不写 schema/catalog，只写表名；依赖“当前库=eleven” -->
-        <table catalog="eleven" tableName="user_profile" domainObjectName="UserProfile">
-            <columnOverride column="gender"  jdbcType="TINYINT" javaType="java.lang.Integer"/>
+        <!-- 不写 schema/catalog，只写表名；依赖“当前库=eleven” mvn clean mybatis-generator:generate -Dmybatis.generator.overwrite=true -->
+        <table  tableName="feed_post" domainObjectName="FeedPost">
+        </table>
+        <table  tableName="feed_like" domainObjectName="FeedLike">
         </table>
     </context>
 </generatorConfiguration>

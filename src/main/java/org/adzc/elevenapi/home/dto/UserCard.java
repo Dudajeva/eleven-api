@@ -1,4 +1,4 @@
-package org.adzc.elevenapi.feed;
+package org.adzc.elevenapi.home.dto;
 
 /**
  * 首页卡片精简视图（不暴露敏感字段）

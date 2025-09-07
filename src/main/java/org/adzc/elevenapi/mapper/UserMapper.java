@@ -2,7 +2,7 @@ package org.adzc.elevenapi.mapper;
 
 import java.util.List;
 import org.adzc.elevenapi.domain.User;
-import org.adzc.elevenapi.feed.UserCard;
+import org.adzc.elevenapi.home.dto.UserCard;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,7 +25,8 @@ public interface UserMapper {
 
     // ===== Feed 用：分页查卡片视图 =====
     List<UserCard> selectUserCards(@Param("limit") int limit,
-                                   @Param("offset") int offset);
+                                   @Param("offset") int offset,
+                                   @Param("userId")long userId);
 
     long countAllForFeed();
 
@@ -33,7 +34,8 @@ public interface UserMapper {
     List<UserCard> selectUserCardsFiltered(@Param("limit") int limit,
                                            @Param("offset") int offset,
                                            @Param("province") String province,
-                                           @Param("city") String city);
+                                           @Param("city") String city,
+                                           @Param("userId")long userId);
 
     long countForFeedFiltered(@Param("province") String province,
                               @Param("city") String city);

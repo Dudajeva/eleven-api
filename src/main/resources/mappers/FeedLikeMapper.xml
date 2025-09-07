@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.FeedLikeMapper">
+  <resultMap id="BaseResultMap" type="org.adzc.elevenapi.domain.FeedLike">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="post_id" jdbcType="BIGINT" property="postId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from feed_like
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.adzc.elevenapi.domain.FeedLike">
+    insert into feed_like (id, post_id, user_id, 
+      created_at)
+    values (#{id,jdbcType=BIGINT}, #{postId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{createdAt,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.FeedLike">
+    update feed_like
+    set post_id = #{postId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, post_id, user_id, created_at
+    from feed_like
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, post_id, user_id, created_at
+    from feed_like
+  </select>
+</mapper>
