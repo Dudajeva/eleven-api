@@ -1,6 +1,7 @@
 package org.adzc.elevenapi.domain;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 public class UserProfile {
     private Long userId;
@@ -9,11 +10,13 @@ public class UserProfile {
 
     private String avatarUrl;
 
-    private int gender;
+    private String photoUrl;
+
+    private Integer gender;
 
     private Integer age;
 
-    private LocalDate birthday;
+    private Date birthday;
 
     private Short heightCm;
 
@@ -31,7 +34,7 @@ public class UserProfile {
 
     private String wechat;
 
-    private LocalDate updatedAt;
+    private Date updatedAt;
 
     private Boolean hidePhotos;
 
@@ -65,11 +68,19 @@ public class UserProfile {
         this.avatarUrl = avatarUrl;
     }
 
-    public int getGender() {
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public Integer getGender() {
         return gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(Integer gender) {
         this.gender = gender;
     }
 
@@ -81,11 +92,11 @@ public class UserProfile {
         this.age = age;
     }
 
-    public LocalDate getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(LocalDate birthday) {
+    public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
 
@@ -153,11 +164,11 @@ public class UserProfile {
         this.wechat = wechat;
     }
 
-    public LocalDate getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDate updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 

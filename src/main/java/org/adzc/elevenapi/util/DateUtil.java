@@ -9,31 +9,7 @@ import java.util.stream.Collectors;
 /**
  * Date/Time utility methods that complement Apache Commons DateUtils.
  *
- * All methods use java.time API (thread-safe).
- *
- * Quick examples:
- *   Duration d = DateUtil.between(Instant.parse("2025-09-01T00:00:00Z"),
- *                                 Instant.parse("2025-09-06T12:34:56Z"));
- *   String human = DateUtil.humanize(d); // "5天12小时34分56秒"
- *
- *   long mins = DateUtil.diff(OffsetDateTime.now(), OffsetDateTime.now().plusHours(3), ChronoUnit.MINUTES);
- *
- *   LocalDate qStart = DateUtil.quarterStart(LocalDate.now());
- *   LocalDate qEnd   = DateUtil.quarterEnd(LocalDate.now());
- *
- *   // 工作日差（排除周末与节假日）
- *   long bdays = DateUtil.businessDaysBetween(LocalDate.of(2025, 9, 1),
- *                                             LocalDate.of(2025, 9, 15),
- *                                             Set.of(LocalDate.of(2025, 9, 4)));
- *
- *   // 向上/向下取整到 15 分钟
- *   ZonedDateTime roundedUp   = DateUtil.roundUp(ZonedDateTime.now(), Duration.ofMinutes(15));
- *   ZonedDateTime roundedDown = DateUtil.roundDown(ZonedDateTime.now(), Duration.ofMinutes(15));
- *
- *   // 区间重叠
- *   Duration overlap = DateUtil.overlap(
- *       Instant.parse("2025-09-01T00:00:00Z"), Instant.parse("2025-09-03T00:00:00Z"),
- *       Instant.parse("2025-09-02T00:00:00Z"), Instant.parse("2025-09-04T00:00:00Z"));
+ * 统一对外使用 java.util.Date；内部用 java.time 计算并在边界转换（时区：Asia/Shanghai）。
  */
 public final class DateUtil {
 
@@ -83,11 +59,13 @@ public final class DateUtil {
         return unit.between(start, end);
     }
 
-    /** 以 Period 表示两个日期的差（年-月-日），典型用于生日、账期等（顺序：start→end）。 */
-    public static Period period(LocalDate start, LocalDate end) {
+    /** 以 Period 表示两个“日期”的差（年-月-日），对外使用 java.util.Date。 */
+    public static Period period(Date start, Date end) {
         Objects.requireNonNull(start, "start");
         Objects.requireNonNull(end, "end");
-        return Period.between(start, end);
+        LocalDate s = toLocalDate(start);
+        LocalDate e = toLocalDate(end);
+        return Period.between(s, e);
     }
 
     /** 人类可读的时长描述（中文）：例如 2天3小时5分10秒；为 0 时返回“0秒”。 */
@@ -109,49 +87,66 @@ public final class DateUtil {
     /* ------------------------------ 工作日/商用日 ------------------------------ */
 
     private static final Set<DayOfWeek> WEEKEND = EnumSet.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
+    private static final ZoneId ZONE = ZoneId.of("Asia/Shanghai");
 
-    /** 判断是否为工作日（周一至周五且不在节假日集合中）。 */
-    public static boolean isBusinessDay(LocalDate date, Set<LocalDate> holidays) {
+    /** 判断是否为工作日（周一至周五且不在节假日集合中）。holidays 为“日期型”集合（忽略时分秒）。 */
+    public static boolean isBusinessDay(Date date, Set<Date> holidays) {
         Objects.requireNonNull(date, "date");
-        boolean weekend = WEEKEND.contains(date.getDayOfWeek());
-        boolean holiday = holidays != null && holidays.contains(date);
+        LocalDate d = toLocalDate(date);
+        boolean weekend = WEEKEND.contains(d.getDayOfWeek());
+        boolean holiday = holidays != null && toLocalDates(holidays).contains(d);
         return !weekend && !holiday;
     }
 
     /** 计算两个日期之间的工作日数量（startInclusive, endExclusive）。 */
-    public static long businessDaysBetween(LocalDate startInclusive, LocalDate endExclusive, Set<LocalDate> holidays) {
+    public static long businessDaysBetween(Date startInclusive, Date endExclusive, Set<Date> holidays) {
         Objects.requireNonNull(startInclusive, "startInclusive");
         Objects.requireNonNull(endExclusive, "endExclusive");
-        long step = startInclusive.isBefore(endExclusive) ? 1 : -1;
+        LocalDate s = toLocalDate(startInclusive);
+        LocalDate e = toLocalDate(endExclusive);
+        Set<LocalDate> hol = toLocalDates(holidays);
+
+        long step = s.isBefore(e) ? 1 : -1;
         long count = 0;
-        for (LocalDate d = startInclusive; !d.equals(endExclusive); d = d.plusDays(step)) {
-            if (isBusinessDay(d, holidays)) count++;
+        for (LocalDate d = s; !d.equals(e); d = d.plusDays(step)) {
+            boolean weekend = WEEKEND.contains(d.getDayOfWeek());
+            boolean holiday = hol != null && hol.contains(d);
+            if (!weekend && !holiday) count++;
         }
         return Math.abs(count);
     }
 
     /** 增加/减少工作日（可为负），跳过周末与节假日。 */
-    public static LocalDate addBusinessDays(LocalDate start, long bizDays, Set<LocalDate> holidays) {
+    public static Date addBusinessDays(Date start, long bizDays, Set<Date> holidays) {
         Objects.requireNonNull(start, "start");
+        LocalDate d = toLocalDate(start);
+        Set<LocalDate> hol = toLocalDates(holidays);
+
         long remaining = Math.abs(bizDays);
         int dir = bizDays >= 0 ? 1 : -1;
-        LocalDate d = start;
         while (remaining > 0) {
             d = d.plusDays(dir);
-            if (isBusinessDay(d, holidays)) remaining--;
+            boolean weekend = WEEKEND.contains(d.getDayOfWeek());
+            boolean holiday = hol != null && hol.contains(d);
+            if (!weekend && !holiday) remaining--;
         }
-        return d;
+        return toDate(d);
     }
 
     /** 下一个工作日（若当天不是工作日则推进到最近的下一个工作日）。 */
-    public static LocalDate nextBusinessDay(LocalDate date, Set<LocalDate> holidays) {
+    public static Date nextBusinessDay(Date date, Set<Date> holidays) {
         Objects.requireNonNull(date, "date");
-        LocalDate d = date;
-        while (!isBusinessDay(d, holidays)) d = d.plusDays(1);
-        return d;
+        LocalDate d = toLocalDate(date);
+        Set<LocalDate> hol = toLocalDates(holidays);
+        while (true) {
+            boolean weekend = WEEKEND.contains(d.getDayOfWeek());
+            boolean holiday = hol != null && hol.contains(d);
+            if (!weekend && !holiday) return toDate(d);
+            d = d.plusDays(1);
+        }
     }
 
-    /* ------------------------------ 取整/对齐 ------------------------------ */
+    /* ------------------------------ 取整/对齐（保留） ------------------------------ */
 
     /** 向下取整到给定间隔（例如 15 分钟）。 */
     public static ZonedDateTime roundDown(ZonedDateTime dt, Duration interval) {
@@ -190,7 +185,7 @@ public final class DateUtil {
         }
     }
 
-    /* ------------------------------ 区间与重叠 ------------------------------ */
+    /* ------------------------------ 区间与重叠（保留） ------------------------------ */
 
     /** 区间是否重叠（[s1, e1) 与 [s2, e2)）。 */
     public static boolean isOverlapping(Instant s1, Instant e1, Instant s2, Instant e2) {
@@ -227,59 +222,65 @@ public final class DateUtil {
         if (!e.isAfter(s)) throw new IllegalArgumentException("end must be after start");
     }
 
-    /* ------------------------------ 账期/季度/周序 ------------------------------ */
+    /* ------------------------------ 账期/季度/周序（Date 版） ------------------------------ */
 
     /** 获取给定日期所在季度的起始日期（当季第一天）。 */
-    public static LocalDate quarterStart(LocalDate date) {
+    public static Date quarterStart(Date date) {
         Objects.requireNonNull(date, "date");
-        int q = ((date.getMonthValue() - 1) / 3) * 3 + 1;
-        return LocalDate.of(date.getYear(), q, 1);
+        LocalDate d = toLocalDate(date);
+        int q = ((d.getMonthValue() - 1) / 3) * 3 + 1;
+        return toDate(LocalDate.of(d.getYear(), q, 1));
     }
 
     /** 获取给定日期所在季度的结束日期（当季最后一天）。 */
-    public static LocalDate quarterEnd(LocalDate date) {
-        LocalDate start = quarterStart(date);
-        return start.plusMonths(3).minusDays(1);
+    public static Date quarterEnd(Date date) {
+        LocalDate start = toLocalDate(quarterStart(date));
+        return toDate(start.plusMonths(3).minusDays(1));
     }
 
     /** 当前日期是本月的第几周（ISO 规则，周一为一周开始）。 */
-    public static int weekOfMonth(LocalDate date) {
+    public static int weekOfMonth(Date date) {
         Objects.requireNonNull(date, "date");
-        return date.get(ChronoField.ALIGNED_WEEK_OF_MONTH);
+        LocalDate d = toLocalDate(date);
+        return d.get(ChronoField.ALIGNED_WEEK_OF_MONTH);
     }
 
     /** 当前日期是当年的第几周（ISO 规则）。 */
-    public static int weekOfYear(LocalDate date) {
+    public static int weekOfYear(Date date) {
         Objects.requireNonNull(date, "date");
+        LocalDate d = toLocalDate(date);
         WeekFields wf = WeekFields.ISO;
-        return date.get(wf.weekOfYear());
+        return d.get(wf.weekOfYear());
     }
 
-    /* ------------------------------ 年龄/生日 ------------------------------ */
+    /* ------------------------------ 年龄/生日（Date 版） ------------------------------ */
 
     /** 计算某人在 onDate 当日的“整数年龄”（未过生日不加一）。 */
-    public static int ageOn(LocalDate birthDate, LocalDate onDate) {
+    public static int ageOn(Date birthDate, Date onDate) {
         Objects.requireNonNull(birthDate, "birthDate");
         Objects.requireNonNull(onDate, "onDate");
-        if (onDate.isBefore(birthDate)) throw new IllegalArgumentException("onDate before birthDate");
-        return Period.between(birthDate, onDate).getYears();
+        LocalDate b = toLocalDate(birthDate);
+        LocalDate o = toLocalDate(onDate);
+        if (o.isBefore(b)) throw new IllegalArgumentException("onDate before birthDate");
+        return Period.between(b, o).getYears();
     }
 
-    /** 下一次生日日期（若今天就是生日，则返回下一年生日）。 */
-    public static LocalDate nextBirthday(LocalDate birthDate, LocalDate from) {
+    /** 下一次生日日期（若当天就是生日，则返回下一年生日；闰年 2/29 在非闰年顺延至 2/28）。 */
+    public static Date nextBirthday(Date birthDate, Date from) {
         Objects.requireNonNull(birthDate, "birthDate");
         Objects.requireNonNull(from, "from");
-        LocalDate candidate = birthDate.withYear(from.getYear());
-        if (!candidate.isAfter(from)) candidate = candidate.plusYears(1);
-        // 2/29 处理：若不是闰年，顺延至 2/28（或按需求改成 3/1）
+        LocalDate b = toLocalDate(birthDate);
+        LocalDate f = toLocalDate(from);
+        LocalDate candidate = b.withYear(f.getYear());
+        if (!candidate.isAfter(f)) candidate = candidate.plusYears(1);
         if (candidate.getMonth() == Month.FEBRUARY && candidate.getDayOfMonth() == 29 &&
                 !Year.isLeap(candidate.getYear())) {
             candidate = LocalDate.of(candidate.getYear(), Month.FEBRUARY, 28);
         }
-        return candidate;
+        return toDate(candidate);
     }
 
-    /* ------------------------------ 拆分/切片 ------------------------------ */
+    /* ------------------------------ 拆分/切片（保留） ------------------------------ */
 
     /** 将一个区间按“自然日”切分成多段 [start,end) 列表，常用于统计日级用量。 */
     public static List<Range<ZonedDateTime>> splitByDay(ZonedDateTime start, ZonedDateTime end) {
@@ -298,7 +299,7 @@ public final class DateUtil {
         return out;
     }
 
-    /* ------------------------------ 解析/格式化（轻便） ------------------------------ */
+    /* ------------------------------ 解析/格式化（轻便，保留 LocalDateTime/Zoned） ------------------------------ */
 
     /** 尝试用一组常见格式解析本地日期时间（不含时区）。 */
     public static Optional<LocalDateTime> tryParseLocalDateTime(String text, List<String> patterns) {
@@ -342,6 +343,7 @@ public final class DateUtil {
     private static boolean hasZone(Temporal t) {
         return t instanceof ZonedDateTime || t instanceof OffsetDateTime || t instanceof Instant;
     }
+
     private static Instant toInstant(Temporal t) {
         if (t instanceof Instant) return (Instant) t;
         if (t instanceof ZonedDateTime) return ((ZonedDateTime) t).toInstant();
@@ -349,7 +351,23 @@ public final class DateUtil {
         throw new IllegalArgumentException("Temporal lacks zone/offset: " + t.getClass());
     }
 
-    /* ------------------------------ 批量工具示例（可选） ------------------------------ */
+    /** Date -> LocalDate（Asia/Shanghai） */
+    private static LocalDate toLocalDate(Date date) {
+        return date.toInstant().atZone(ZONE).toLocalDate();
+    }
+
+    /** LocalDate -> Date（当天 00:00，Asia/Shanghai） */
+    private static Date toDate(LocalDate d) {
+        return Date.from(d.atStartOfDay(ZONE).toInstant());
+    }
+
+    /** Set<Date> -> Set<LocalDate>（按 Asia/Shanghai 截断到日期） */
+    private static Set<LocalDate> toLocalDates(Set<Date> dates) {
+        if (dates == null) return null;
+        return dates.stream().filter(Objects::nonNull).map(DateUtil::toLocalDate).collect(Collectors.toSet());
+    }
+
+    /* ------------------------------ 批量工具示例（保留） ------------------------------ */
 
     /** 将一组区间合并（同类型 Instant 区间），返回去重叠后的并集。 */
     public static List<Range<Instant>> mergeIntervals(List<Range<Instant>> intervals) {

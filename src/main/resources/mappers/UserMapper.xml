@@ -41,12 +41,12 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, `identity`, email, phone, password_hash, tier, photo_url, created_at, 
     updated_at
-    from eleven..user
+    from user
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, `identity`, email, phone, password_hash, tier, photo_url, created_at, 
     updated_at
-    from eleven..user
+    from user
   </select>
 </mapper>

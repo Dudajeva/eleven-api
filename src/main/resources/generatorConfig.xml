@@ -24,8 +24,8 @@
                              targetProject="src/main/java"/>
 
         <!-- 不写 schema/catalog，只写表名；依赖“当前库=eleven” -->
-        <table catalog="eleven" tableName="user"        domainObjectName="User"/>
         <table catalog="eleven" tableName="user_profile" domainObjectName="UserProfile">
+            <columnOverride column="gender"  jdbcType="TINYINT" javaType="java.lang.Integer"/>
         </table>
     </context>
 </generatorConfiguration>

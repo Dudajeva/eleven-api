@@ -8,7 +8,8 @@ public class RegisterRequest {
     @NotBlank
     private String password;
     @NotBlank
-    private String gender;     // male/female
+    private String gender;
+    // male/female
     private String nickname;
 
     // getter/setter
