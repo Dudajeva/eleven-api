@@ -1,15 +1,13 @@
 package org.adzc.elevenapi.message.service;
 
-import org.adzc.elevenapi.message.dto.MessageDTO;
-import org.adzc.elevenapi.message.mapper.ChatConversationExtMapper;
-import org.adzc.elevenapi.message.mapper.ChatConversationListMapper;
-import org.adzc.elevenapi.message.mapper.ChatMemberExtMapper;
-import org.adzc.elevenapi.message.mapper.ChatMessageExtMapper;
+import org.adzc.elevenapi.domain.ChatConversation;
+import org.adzc.elevenapi.domain.ChatMessage;
+import org.adzc.elevenapi.mapper.ChatConversationMapper;
+import org.adzc.elevenapi.mapper.ChatMemberMapper;
+import org.adzc.elevenapi.mapper.ChatMessageMapper;
 import org.adzc.elevenapi.message.dto.ConversationItemDTO;
+import org.adzc.elevenapi.message.dto.MessageDTO;
 import org.adzc.elevenapi.util.TextPreviewUtil;
-import org.adzc.elevenapi.model.ChatConversation; // 你的 generator 产物
-import org.adzc.elevenapi.model.ChatMember;
-import org.adzc.elevenapi.model.ChatMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,15 +17,15 @@ import java.util.List;
 @Service
 public class ChatService {
 
-    private final ChatConversationExtMapper convExt;
+    private final ChatConversationMapper convExt;
     private final ChatConversationListMapper listMapper;
-    private final ChatMemberExtMapper memExt;
-    private final ChatMessageExtMapper msgExt;
+    private final ChatMemberMapper memExt;
+    private final ChatMessageMapper msgExt;
 
-    public ChatService(ChatConversationExtMapper convExt,
+    public ChatService(ChatConversationMapper convExt,
                        ChatConversationListMapper listMapper,
-                       ChatMemberExtMapper memExt,
-                       ChatMessageExtMapper msgExt) {
+                       ChatMemberMapper memExt,
+                       ChatMessageMapper msgExt) {
         this.convExt = convExt;
         this.listMapper = listMapper;
         this.memExt = memExt;
@@ -74,10 +72,10 @@ public class ChatService {
         m.setConversationId(conversationId);
         m.setSenderId(senderId);
         if (imgUrl != null && !imgUrl.isBlank()) {
-            m.setType((byte)2);
+            m.setType(2);
             m.setImageUrl(imgUrl);
         } else {
-            m.setType((byte)1);
+            m.setType(1);
             m.setContent(msg);
         }
         msgExt.insert(m); // 自增
