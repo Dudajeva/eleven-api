@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.ChatMemberMapper">
+  <resultMap id="BaseResultMap" type="org.adzc.elevenapi.domain.ChatMember">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="conversation_id" jdbcType="BIGINT" property="conversationId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="last_read_message_id" jdbcType="BIGINT" property="lastReadMessageId" />
+    <result column="is_muted" jdbcType="TINYINT" property="isMuted" />
+    <result column="is_pinned" jdbcType="TINYINT" property="isPinned" />
+    <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt" />
+    <result column="joined_at" jdbcType="TIMESTAMP" property="joinedAt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from chat_member
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.ChatMember" useGeneratedKeys="true">
+    insert into chat_member (conversation_id, user_id, last_read_message_id, 
+      is_muted, is_pinned, deleted_at, 
+      joined_at)
+    values (#{conversationId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{lastReadMessageId,jdbcType=BIGINT}, 
+      #{isMuted,jdbcType=TINYINT}, #{isPinned,jdbcType=TINYINT}, #{deletedAt,jdbcType=TIMESTAMP}, 
+      #{joinedAt,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.ChatMember">
+    update chat_member
+    set conversation_id = #{conversationId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      last_read_message_id = #{lastReadMessageId,jdbcType=BIGINT},
+      is_muted = #{isMuted,jdbcType=TINYINT},
+      is_pinned = #{isPinned,jdbcType=TINYINT},
+      deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+      joined_at = #{joinedAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, conversation_id, user_id, last_read_message_id, is_muted, is_pinned, deleted_at, 
+    joined_at
+    from chat_member
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, conversation_id, user_id, last_read_message_id, is_muted, is_pinned, deleted_at, 
+    joined_at
+    from chat_member
+  </select>
+</mapper>

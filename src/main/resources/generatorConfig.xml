@@ -19,6 +19,7 @@
                         connectionURL="jdbc:mysql://rm-2ze5qu49xtfkxeo4mvo.mysql.rds.aliyuncs.com:3306/eleven?useUnicode=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=Asia/Shanghai"
                         userId="root" password="AAaa1234"/>
 
+
         <javaModelGenerator targetPackage="org.adzc.elevenapi.domain" targetProject="src/main/java"/>
         <sqlMapGenerator   targetPackage="mappers"                   targetProject="src/main/resources"/>
         <javaClientGenerator type="XMLMAPPER"
@@ -26,10 +27,18 @@
                              targetProject="src/main/java"/>
 
         <!-- 不写 schema/catalog，只写表名；依赖“当前库=eleven” mvn clean mybatis-generator:generate -Dmybatis.generator.overwrite=true -->
-        <table  tableName="feed_post" domainObjectName="FeedPost">
+        <table  tableName="chat_block" domainObjectName="ChatBlock">
             <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
-        <table  tableName="feed_like" domainObjectName="FeedLike">
+        <table  tableName="chat_conversation" domainObjectName="ChatConversation">
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
+        <table  tableName="chat_member" domainObjectName="ChatMember">
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
+        </table>
+        <table  tableName="chat_message" domainObjectName="ChatMessage">
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
+        </table>
+        <table  tableName="chat_message_read" domainObjectName="ChatMessageRead"/>
     </context>
 </generatorConfiguration>

@@ -95,13 +95,6 @@ public class AuthService {
         return user;
     }
 
-    /**
-     * 解析 token
-     */
-    public Jws<Claims> parse(String token) {
-        return jwtUtil.parseAndValidate(token);
-    }
-
     /* ===== 工具方法 ===== */
     private static String normalizeIdentity(String s) {
         if (s == null) return null;

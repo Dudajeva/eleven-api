@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.ChatMessageReadMapper">
+  <resultMap id="BaseResultMap" type="org.adzc.elevenapi.domain.ChatMessageRead">
+    <id column="message_id" jdbcType="BIGINT" property="messageId" />
+    <id column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="read_at" jdbcType="TIMESTAMP" property="readAt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from chat_message_read
+    where message_id = #{messageId,jdbcType=BIGINT}
+      and user_id = #{userId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="org.adzc.elevenapi.domain.ChatMessageRead">
+    insert into chat_message_read (message_id, user_id, read_at
+      )
+    values (#{messageId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{readAt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.ChatMessageRead">
+    update chat_message_read
+    set read_at = #{readAt,jdbcType=TIMESTAMP}
+    where message_id = #{messageId,jdbcType=BIGINT}
+      and user_id = #{userId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+    select message_id, user_id, read_at
+    from chat_message_read
+    where message_id = #{messageId,jdbcType=BIGINT}
+      and user_id = #{userId,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select message_id, user_id, read_at
+    from chat_message_read
+  </select>
+</mapper>

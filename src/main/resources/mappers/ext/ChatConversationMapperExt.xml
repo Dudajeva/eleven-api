@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.ChatConversationMapper">
+
+    <select id="findById" parameterType="long" resultType="org.adzc.elevenapi.domain.ChatConversation">
+        select * from chat_conversation where id = #{id}
+    </select>
+
+    <update id="updateLast">
+        update chat_conversation
+        set last_message_id = #{mid},
+            last_preview = #{preview},
+            last_time = now()
+        where id = #{cid}
+    </update>
+
+    <select id="findIdByUsers" resultType="long">
+        select id from chat_conversation where u1_id = #{u1} and u2_id = #{u2} limit 1
+    </select>
+
+    <insert id="insertConversation" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_conversation (type, u1_id, u2_id, created_at, updated_at)
+        values (1, #{u1}, #{u2}, now(), now())
+    </insert>
+
+</mapper>

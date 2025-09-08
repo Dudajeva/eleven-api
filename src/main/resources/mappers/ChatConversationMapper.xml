@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.ChatConversationMapper">
+  <resultMap id="BaseResultMap" type="org.adzc.elevenapi.domain.ChatConversation">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="u1_id" jdbcType="BIGINT" property="u1Id" />
+    <result column="u2_id" jdbcType="BIGINT" property="u2Id" />
+    <result column="last_message_id" jdbcType="BIGINT" property="lastMessageId" />
+    <result column="last_preview" jdbcType="VARCHAR" property="lastPreview" />
+    <result column="last_time" jdbcType="TIMESTAMP" property="lastTime" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from chat_conversation
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.ChatConversation" useGeneratedKeys="true">
+    insert into chat_conversation ("type", u1_id, u2_id, 
+      last_message_id, last_preview, last_time, 
+      created_at, updated_at)
+    values (#{type,jdbcType=TINYINT}, #{u1Id,jdbcType=BIGINT}, #{u2Id,jdbcType=BIGINT}, 
+      #{lastMessageId,jdbcType=BIGINT}, #{lastPreview,jdbcType=VARCHAR}, #{lastTime,jdbcType=TIMESTAMP}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.ChatConversation">
+    update chat_conversation
+    set "type" = #{type,jdbcType=TINYINT},
+      u1_id = #{u1Id,jdbcType=BIGINT},
+      u2_id = #{u2Id,jdbcType=BIGINT},
+      last_message_id = #{lastMessageId,jdbcType=BIGINT},
+      last_preview = #{lastPreview,jdbcType=VARCHAR},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, "type", u1_id, u2_id, last_message_id, last_preview, last_time, created_at, 
+    updated_at
+    from chat_conversation
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, "type", u1_id, u2_id, last_message_id, last_preview, last_time, created_at, 
+    updated_at
+    from chat_conversation
+  </select>
+</mapper>

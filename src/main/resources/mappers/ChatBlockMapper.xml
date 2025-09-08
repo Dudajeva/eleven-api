@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.ChatBlockMapper">
+  <resultMap id="BaseResultMap" type="org.adzc.elevenapi.domain.ChatBlock">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="target_id" jdbcType="BIGINT" property="targetId" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from chat_block
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.ChatBlock" useGeneratedKeys="true">
+    insert into chat_block (user_id, target_id, created_at
+      )
+    values (#{userId,jdbcType=BIGINT}, #{targetId,jdbcType=BIGINT}, #{createdAt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.ChatBlock">
+    update chat_block
+    set user_id = #{userId,jdbcType=BIGINT},
+      target_id = #{targetId,jdbcType=BIGINT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, user_id, target_id, created_at
+    from chat_block
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, user_id, target_id, created_at
+    from chat_block
+  </select>
+</mapper>
