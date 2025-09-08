@@ -2,6 +2,8 @@ package org.adzc.elevenapi.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import lombok.RequiredArgsConstructor;
+import org.adzc.elevenapi.auth.dto.LoginResult;
 import org.adzc.elevenapi.auth.dto.RegisterRequest;
 import org.adzc.elevenapi.domain.User;
 import org.adzc.elevenapi.domain.UserMembership;
@@ -23,6 +25,7 @@ import java.util.Map;
  * 登录鉴权服务：使用 MyBatis 查库 + BCrypt 校验
  */
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserMapper userMapper;
@@ -33,42 +36,6 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder encoder;
 
-    public AuthService(UserMapper userMapper, UserProfileMapper userProfileMapper, UserMembershipMapper userMembershipMapper,
-                       JwtUtil jwtUtil, BCryptPasswordEncoder encoder) {
-        this.userMapper = userMapper;
-        this.userProfileMapper = userProfileMapper;
-        this.userMembershipMapper = userMembershipMapper;
-
-        this.jwtUtil = jwtUtil;
-        this.encoder = encoder;
-    }
-
-    /**
-     * 登录结果：token + user
-     */
-    public static class LoginResult {
-        private final String token;
-        private final User user;
-        private final UserProfile userProfile;
-
-        public LoginResult(String token, User user, UserProfile userProfile) {
-            this.token = token;
-            this.user = user;
-            this.userProfile = userProfile;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public User getUser() {
-            return user;
-        }
-
-        public UserProfile getUserProfile() {
-            return userProfile;
-        }
-    }
 
     /**
      * 登录：identity（邮箱或手机号），password（明文）
@@ -79,18 +46,18 @@ public class AuthService {
         if (user == null || !encoder.matches(safe(rawPassword), user.getPasswordHash())) {
             throw new IllegalArgumentException("用户名或密码错误");
         }
-        UserProfile userProfile = userProfileMapper.selectByPrimaryKey(user.getId());
-
-        if (userProfile == null) {
+        UserMembership userMembership = userMembershipMapper.findByUserId(user.getId());
+        if (userMembership == null) {
             throw new IllegalArgumentException("用户名或密码错误");
         }
+        UserProfile userProfile = userProfileMapper.selectByPrimaryKey(user.getId());
         Map<String, Object> claims = new HashMap<>();
         claims.put("uid", user.getId());
         claims.put("nick", userProfile.getNickname());
 
         String subject = user.getIdentity() != null ? user.getIdentity() : norm;
         String token = jwtUtil.generateToken(subject, claims);
-        return new LoginResult(token, user, userProfile);
+        return new LoginResult(token, user, userProfile,userMembership);
     }
 
     @Transactional

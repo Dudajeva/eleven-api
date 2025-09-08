@@ -1,9 +1,12 @@
 package org.adzc.elevenapi.auth;
 
 import jakarta.validation.constraints.NotBlank;
+import org.adzc.elevenapi.auth.dto.AuthDto;
+import org.adzc.elevenapi.auth.dto.LoginResult;
 import org.adzc.elevenapi.auth.dto.RegisterRequest;
 import org.adzc.elevenapi.domain.User;
 import org.adzc.elevenapi.domain.UserProfile;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -43,26 +46,32 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody @Validated LoginRequest req) {
+    public AuthDto login(@RequestBody @Validated LoginRequest req) {
         try {
-            AuthService.LoginResult result = authService.login(req.identity, req.password);
+            LoginResult result = authService.login(req.identity, req.password);
             User user = result.getUser();
             UserProfile userProfile = result.getUserProfile();
 
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("token", result.getToken());
-            resp.put("userId", user.getId());
+            AuthDto authDto = new AuthDto();
+            authDto.setToken(result.getToken());
+            authDto.setUserId(user.getId());
             // 统一回传“登录用的 identity”（邮箱优先，否则手机号；若两者皆空则回请求值）
             String idVal = (user.getIdentity() != null && !user.getIdentity().isBlank())
                     ? user.getIdentity()
                     : (user.getEmail() != null && !user.getEmail().isBlank())
                     ? user.getEmail()
                     : (user.getPhone() != null ? user.getPhone() : req.identity);
-            resp.put("identity", idVal);
-            resp.put("nickname", userProfile.getNickname());
-            resp.put("firstLogin",userProfile.getFirstLogin());
+            authDto.setIdentity(idVal);
+            authDto.setNickname(userProfile.getNickname());
+            authDto.setFirstLogin(userProfile.getFirstLogin());
+            authDto.setAge(userProfile.getAge());
+            authDto.setProvince(userProfile.getProvince());
+            authDto.setAvatarUrl(userProfile.getAvatarUrl());
+            authDto.setCity(userProfile.getCity());
+            authDto.setTier(result.getUserMembership().getTier());
+
             // 性别这轮先不返回；后续需要时可加 resp.put("gender", u.getGender());
-            return resp;
+            return authDto;
 
         } catch (IllegalArgumentException bad) {
             throw new BadRequestException("用户名或密码错误");
