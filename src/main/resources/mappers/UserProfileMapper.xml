@@ -27,7 +27,7 @@
     delete from user_profile
     where user_id = #{userId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="org.adzc.elevenapi.domain.UserProfile">
+  <insert id="insert" parameterType="org.adzc.elevenapi.domain.UserProfile" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into user_profile (user_id, nickname, avatar_url,
       photo_url, gender, age, 
       birthday, height_cm, weight_kg, 

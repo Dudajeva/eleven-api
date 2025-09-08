@@ -16,7 +16,7 @@
     delete from user
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="org.adzc.elevenapi.domain.User">
+  <insert id="insert" parameterType="org.adzc.elevenapi.domain.User" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into user (id, `identity`, email,
       phone, password_hash, tier, 
       photo_url, created_at, updated_at

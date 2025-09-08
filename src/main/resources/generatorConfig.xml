@@ -8,6 +8,8 @@
         <property name="nullCatalogMeansCurrent" value="true"/>
         <property name="autoDelimitKeywords" value="true"/>
 
+        <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin"/>
+
         <commentGenerator>
             <property name="suppressAllComments" value="true"/>
             <property name="suppressDate" value="true"/>
@@ -25,6 +27,7 @@
 
         <!-- 不写 schema/catalog，只写表名；依赖“当前库=eleven” mvn clean mybatis-generator:generate -Dmybatis.generator.overwrite=true -->
         <table  tableName="feed_post" domainObjectName="FeedPost">
+            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
         <table  tableName="feed_like" domainObjectName="FeedLike">
         </table>

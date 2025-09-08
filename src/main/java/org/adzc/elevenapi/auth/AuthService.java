@@ -112,7 +112,7 @@ public class AuthService {
         profile.setGender("male".equalsIgnoreCase(req.getGender()) ? 1 : 0);
         profile.setHidePhotos(false);
         profile.setFirstLogin(true);
-        userProfileMapper.updateByPrimaryKey(profile);
+        userProfileMapper.insert(profile);
 
         //用户会员信息
         UserMembership userMembership = new UserMembership();
@@ -122,6 +122,8 @@ public class AuthService {
         userMembership.setInviteLeft(5);
         userMembership.setStartTime(new Date());
         userMembership.setExpireTime(DateUtils.addYears(new Date(), 1));
+        userMembership.setAutoRenew(false);
+        userMembership.setStatus("active");
         userMembershipMapper.insert(userMembership);
         return user;
     }

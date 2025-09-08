@@ -12,7 +12,7 @@
     delete from feed_post
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="org.adzc.elevenapi.domain.FeedPost">
+  <insert id="insert" parameterType="org.adzc.elevenapi.domain.FeedPost" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into feed_post (id, user_id, text,
       photo_url, created_at)
     values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{text,jdbcType=VARCHAR}, 
