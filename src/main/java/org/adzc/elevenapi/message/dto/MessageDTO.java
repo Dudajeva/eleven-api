@@ -1,13 +1,14 @@
 package org.adzc.elevenapi.message.dto;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public record MessageDTO(
         Long id,
         Long conversationId,
         Long senderId,
-        Byte type,          // 1=text 2=image
+        Integer type,          // 1=text 2=image
         String content,
         String imageUrl,
-        LocalDateTime createdAt
+        Date createdAt
 ) {}

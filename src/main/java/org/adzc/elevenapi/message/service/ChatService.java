@@ -2,6 +2,7 @@ package org.adzc.elevenapi.message.service;
 
 import org.adzc.elevenapi.domain.ChatConversation;
 import org.adzc.elevenapi.domain.ChatMessage;
+import org.adzc.elevenapi.mapper.ChatConversationListMapper;
 import org.adzc.elevenapi.mapper.ChatConversationMapper;
 import org.adzc.elevenapi.mapper.ChatMemberMapper;
 import org.adzc.elevenapi.mapper.ChatMessageMapper;
