@@ -1,9 +1,8 @@
-package org.adzc.elevenapi.message.controller;
+package org.adzc.elevenapi.message;
 
 import org.adzc.elevenapi.message.dto.ConversationItemDTO;
 import org.adzc.elevenapi.message.dto.MessageDTO;
 import org.adzc.elevenapi.message.dto.OpenConversationResponse;
-import org.adzc.elevenapi.message.service.ChatService;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;

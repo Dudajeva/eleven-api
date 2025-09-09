@@ -1,4 +1,4 @@
-package org.adzc.elevenapi.message.ws;
+package org.adzc.elevenapi.message;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;

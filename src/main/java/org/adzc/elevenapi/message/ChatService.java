@@ -1,4 +1,4 @@
-package org.adzc.elevenapi.message.service;
+package org.adzc.elevenapi.message;
 
 import org.adzc.elevenapi.domain.ChatConversation;
 import org.adzc.elevenapi.domain.ChatMessage;

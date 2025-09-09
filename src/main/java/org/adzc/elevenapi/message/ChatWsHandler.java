@@ -1,8 +1,7 @@
-package org.adzc.elevenapi.message.ws;
+package org.adzc.elevenapi.message;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.adzc.elevenapi.message.service.ChatService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
