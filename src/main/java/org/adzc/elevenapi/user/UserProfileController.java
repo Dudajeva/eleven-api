@@ -36,6 +36,11 @@ public class UserProfileController {
         return "OK";
     }
 
+    @GetMapping("/{userId}")
+    public UserProfile byId(@PathVariable Long userId) {
+        return service.getOrInit(userId);
+    }
+
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadAvatar(@RequestParam("file") MultipartFile file, HttpServletRequest req,@CurrentUid Long uid) throws Exception {
         if (file.isEmpty()) throw new RuntimeException("空文件");

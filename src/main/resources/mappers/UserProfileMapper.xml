@@ -16,6 +16,7 @@
     <result column="profession" jdbcType="VARCHAR" property="profession" />
     <result column="zodiac" jdbcType="VARCHAR" property="zodiac" />
     <result column="drinking" jdbcType="VARCHAR" property="drinking" />
+      <result column="intro" jdbcType="VARCHAR" property="intro" />
     <result column="wechat" jdbcType="VARCHAR" property="wechat" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
     <result column="hide_photos" jdbcType="BIT" property="hidePhotos" />
@@ -32,14 +33,14 @@
       photo_url, gender, age, 
       birthday, height_cm, weight_kg, 
       province, city, profession, 
-      zodiac, drinking, wechat, 
+      zodiac, drinking,intro, wechat,
       updated_at, hide_photos, first_login, 
       gallery_json, hobbies)
     values (#{userId,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}, #{avatarUrl,jdbcType=VARCHAR}, 
       #{photoUrl,jdbcType=VARCHAR}, #{gender,jdbcType=TINYINT}, #{age,jdbcType=INTEGER}, 
       #{birthday,jdbcType=DATE}, #{heightCm,jdbcType=SMALLINT}, #{weightKg,jdbcType=SMALLINT}, 
       #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{profession,jdbcType=VARCHAR}, 
-      #{zodiac,jdbcType=VARCHAR}, #{drinking,jdbcType=VARCHAR}, #{wechat,jdbcType=VARCHAR}, 
+      #{zodiac,jdbcType=VARCHAR}, #{drinking,jdbcType=VARCHAR},#{intro,jdbcType=VARCHAR}, #{wechat,jdbcType=VARCHAR},
       #{updatedAt,jdbcType=TIMESTAMP}, #{hidePhotos,jdbcType=BIT}, #{firstLogin,jdbcType=BIT}, 
       #{galleryJson,jdbcType=LONGVARCHAR}, #{hobbies,jdbcType=LONGVARCHAR})
   </insert>
@@ -58,6 +59,7 @@
       profession = #{profession,jdbcType=VARCHAR},
       zodiac = #{zodiac,jdbcType=VARCHAR},
       drinking = #{drinking,jdbcType=VARCHAR},
+      intro = #{intro,jdbcType=VARCHAR},
       wechat = #{wechat,jdbcType=VARCHAR},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP},
       hide_photos = #{hidePhotos,jdbcType=BIT},
@@ -68,14 +70,14 @@
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select user_id, nickname, avatar_url, photo_url, gender, age, birthday, height_cm, 
-    weight_kg, province, city, profession, zodiac, drinking, wechat, updated_at, hide_photos, 
+    weight_kg, province, city, profession, zodiac, drinking, intro,wechat, updated_at, hide_photos,
     first_login, gallery_json, hobbies
     from user_profile
     where user_id = #{userId,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select user_id, nickname, avatar_url, photo_url, gender, age, birthday, height_cm, 
-    weight_kg, province, city, profession, zodiac, drinking, wechat, updated_at, hide_photos, 
+    weight_kg, province, city, profession, zodiac, drinking, intro,wechat, updated_at, hide_photos,
     first_login, gallery_json, hobbies
     from user_profile
   </select>

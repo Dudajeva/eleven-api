@@ -20,10 +20,10 @@
         c.id AS conversationId,
         CASE WHEN c.u1_id = #{me} THEN c.u2_id ELSE c.u1_id END AS userId,
         p.nickname AS nickname,
-        p.avatar AS avatarUrl,
+        p.avatar_url AS avatarUrl,
         p.province AS province,
         p.city AS city,
-        msp.level AS tier,
+        msp.tier AS tier,
         c.last_preview AS lastMessage,
         c.last_time AS lastTime,
         GREATEST(0, (
@@ -35,7 +35,7 @@
         FROM chat_member mem
         JOIN chat_conversation c ON c.id = mem.conversation_id
         JOIN user_profile p ON p.user_id = CASE WHEN c.u1_id = #{me} THEN c.u2_id ELSE c.u1_id END
-        LEFT JOIN membership msp ON msp.user_id = p.user_id
+        LEFT JOIN user_membership msp ON msp.user_id = p.user_id
         WHERE mem.user_id = #{me} AND mem.deleted_at IS NULL
         ORDER BY c.last_time DESC
         LIMIT #{limit} OFFSET #{offset}

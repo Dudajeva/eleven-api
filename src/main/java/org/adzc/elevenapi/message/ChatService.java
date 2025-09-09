@@ -18,33 +18,33 @@ import java.util.List;
 @Service
 public class ChatService {
 
-    private final ChatConversationMapper convExt;
+    private final ChatConversationMapper chatConversationMapper;
     private final ChatConversationListMapper listMapper;
-    private final ChatMemberMapper memExt;
+    private final ChatMemberMapper chatMemberMapper;
     private final ChatMessageMapper msgExt;
 
-    public ChatService(ChatConversationMapper convExt,
+    public ChatService(ChatConversationMapper chatConversationMapper,
                        ChatConversationListMapper listMapper,
-                       ChatMemberMapper memExt,
+                       ChatMemberMapper chatMemberMapper,
                        ChatMessageMapper msgExt) {
-        this.convExt = convExt;
+        this.chatConversationMapper = chatConversationMapper;
         this.listMapper = listMapper;
-        this.memExt = memExt;
+        this.chatMemberMapper = chatMemberMapper;
         this.msgExt = msgExt;
     }
 
     /** 校验成员并返回对端ID */
     public Long ensureMember(Long me, Long conversationId) {
-        ChatConversation c = convExt.findById(conversationId);
+        ChatConversation c = chatConversationMapper.findById(conversationId);
         if (c == null) throw new IllegalArgumentException("会话不存在");
-        Boolean joined = memExt.exists(conversationId, me);
+        Boolean joined = chatMemberMapper.exists(conversationId, me);
         if (joined == null || !joined) throw new IllegalStateException("非会话成员");
         return me.equals(c.getU1Id()) ? c.getU2Id() : c.getU1Id();
     }
 
     /** 获取对端ID */
     public Long getPeerId(Long me, Long conversationId) {
-        ChatConversation c = convExt.findById(conversationId);
+        ChatConversation c = chatConversationMapper.findById(conversationId);
         if (c == null) throw new IllegalArgumentException("会话不存在");
         return me.equals(c.getU1Id()) ? c.getU2Id() : c.getU1Id();
     }
@@ -82,7 +82,7 @@ public class ChatService {
         msgExt.insert(m); // 自增
 
         String preview = TextPreviewUtil.from(m);
-        convExt.updateLast(conversationId, m.getId(), preview);
+        chatConversationMapper.updateLast(conversationId, m.getId(), preview);
 
         return new Saved(m.getId(), Instant.now().toEpochMilli(), preview);
     }
@@ -90,13 +90,13 @@ public class ChatService {
     /** 已读 */
     @Transactional
     public Long markRead(Long me, Long conversationId, Long lastReadMessageId) {
-        memExt.updateLastRead(conversationId, me, lastReadMessageId);
+        chatMemberMapper.updateLastRead(conversationId, me, lastReadMessageId);
         return getPeerId(me, conversationId);
     }
 
     /** 未读统计 */
     public int calcUnread(Long uid, Long conversationId) {
-        Long lastRead = memExt.getLastRead(conversationId, uid);
+        Long lastRead = chatMemberMapper.getLastRead(conversationId, uid);
         long cursor = lastRead == null ? 0L : lastRead;
         return msgExt.countUnread(conversationId, uid, cursor);
     }
@@ -105,15 +105,18 @@ public class ChatService {
     @Transactional
     public Long openOrCreate(Long me, Long targetId) {
         long u1 = Math.min(me, targetId), u2 = Math.max(me, targetId);
-        Long cid = convExt.findIdByUsers(u1, u2);
+        Long cid = chatConversationMapper.findIdByUsers(u1, u2);
         if (cid != null) return cid;
 
-        // 用你的基础 Mapper 插入（此处只写逻辑，SQL 在 Ext XML 给出）
-        convExt.insertConversation(u1, u2);           // 返回自增ID：在 XML 里用 useGeneratedKeys
-        cid = convExt.findIdByUsers(u1, u2);
+        ChatConversation chatConversation=new ChatConversation();
+        chatConversation.setU1Id(u1);
+        chatConversation.setU2Id(u2);
+        chatConversation.setType(1);//私聊
+        chatConversationMapper.insert(chatConversation);
 
-        memExt.insertMember(cid, u1);
-        memExt.insertMember(cid, u2);
+
+        chatMemberMapper.insertMember(cid, u1);
+        chatMemberMapper.insertMember(cid, u2);
         return cid;
     }
 

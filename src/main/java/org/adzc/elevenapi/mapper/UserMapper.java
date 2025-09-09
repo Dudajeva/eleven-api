@@ -1,6 +1,8 @@
 package org.adzc.elevenapi.mapper;
 
 import java.util.List;
+import java.util.Map;
+
 import org.adzc.elevenapi.domain.User;
 import org.adzc.elevenapi.home.dto.UserCard;
 import org.apache.ibatis.annotations.Mapper;
@@ -39,4 +41,7 @@ public interface UserMapper {
 
     long countForFeedFiltered(@Param("province") String province,
                               @Param("city") String city);
+
+    Map<String,Object> findDetail(@Param("userId") Long userId);
+
 }

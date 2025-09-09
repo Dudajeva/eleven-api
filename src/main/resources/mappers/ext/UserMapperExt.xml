@@ -89,5 +89,24 @@
         WHERE phone = #{phone}
         LIMIT 1
     </select>
-
+    <select id="findDetail" parameterType="long" resultType="map">
+        SELECT u.id,
+        u.identity,
+        up.nickname,
+        up.avatar_url,
+        up.photo_url,
+        up.province,
+        up.city,
+        up.age,
+        up.profession,
+        up.zodiac,
+        up.drinking,
+        up.intro,
+        um.tier,
+        um.expire_time
+        FROM user u
+        LEFT JOIN user_profile up ON up.user_id = u.id
+        LEFT JOIN user_membership um ON um.user_id = u.id
+        WHERE u.id = #{userId}
+    </select>
 </mapper>
