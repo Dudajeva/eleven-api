@@ -1,6 +1,5 @@
 package org.adzc.elevenapi.mapper;
 
-import java.util.List;
 import org.adzc.elevenapi.domain.ChatMessageRead;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,9 +10,11 @@ public interface ChatMessageReadMapper {
 
     int insert(ChatMessageRead row);
 
+    int insertSelective(ChatMessageRead row);
+
     ChatMessageRead selectByPrimaryKey(@Param("messageId") Long messageId, @Param("userId") Long userId);
 
-    List<ChatMessageRead> selectAll();
+    int updateByPrimaryKeySelective(ChatMessageRead row);
 
     int updateByPrimaryKey(ChatMessageRead row);
 }

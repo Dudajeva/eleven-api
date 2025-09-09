@@ -1,6 +1,5 @@
 package org.adzc.elevenapi.mapper;
 
-import java.util.List;
 import org.adzc.elevenapi.domain.ChatMember;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,9 +10,11 @@ public interface ChatMemberMapper {
 
     int insert(ChatMember row);
 
+    int insertSelective(ChatMember row);
+
     ChatMember selectByPrimaryKey(Long id);
 
-    List<ChatMember> selectAll();
+    int updateByPrimaryKeySelective(ChatMember row);
 
     int updateByPrimaryKey(ChatMember row);
 

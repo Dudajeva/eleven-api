@@ -5,30 +5,125 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="conversation_id" jdbcType="BIGINT" property="conversationId" />
     <result column="sender_id" jdbcType="BIGINT" property="senderId" />
-    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="message_type" jdbcType="TINYINT" property="messageType" />
     <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="image_url" jdbcType="VARCHAR" property="imageUrl" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="recall_at" jdbcType="TIMESTAMP" property="recallAt" />
     <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt" />
   </resultMap>
+  <sql id="Base_Column_List">
+    id, conversation_id, sender_id, message_type, content, image_url, created_at, recall_at, 
+    deleted_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from chat_message
+    where id = #{id,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from chat_message
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.ChatMessage" useGeneratedKeys="true">
-    insert into chat_message (conversation_id, sender_id, "type", 
+    insert into chat_message (conversation_id, sender_id, message_type, 
       content, image_url, created_at, 
       recall_at, deleted_at)
-    values (#{conversationId,jdbcType=BIGINT}, #{senderId,jdbcType=BIGINT}, #{type,jdbcType=TINYINT}, 
+    values (#{conversationId,jdbcType=BIGINT}, #{senderId,jdbcType=BIGINT}, #{messageType,jdbcType=TINYINT}, 
       #{content,jdbcType=VARCHAR}, #{imageUrl,jdbcType=VARCHAR}, #{createdAt,jdbcType=TIMESTAMP}, 
       #{recallAt,jdbcType=TIMESTAMP}, #{deletedAt,jdbcType=TIMESTAMP})
   </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.ChatMessage" useGeneratedKeys="true">
+    insert into chat_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="conversationId != null">
+        conversation_id,
+      </if>
+      <if test="senderId != null">
+        sender_id,
+      </if>
+      <if test="messageType != null">
+        message_type,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="imageUrl != null">
+        image_url,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="recallAt != null">
+        recall_at,
+      </if>
+      <if test="deletedAt != null">
+        deleted_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="conversationId != null">
+        #{conversationId,jdbcType=BIGINT},
+      </if>
+      <if test="senderId != null">
+        #{senderId,jdbcType=BIGINT},
+      </if>
+      <if test="messageType != null">
+        #{messageType,jdbcType=TINYINT},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null">
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recallAt != null">
+        #{recallAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedAt != null">
+        #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.adzc.elevenapi.domain.ChatMessage">
+    update chat_message
+    <set>
+      <if test="conversationId != null">
+        conversation_id = #{conversationId,jdbcType=BIGINT},
+      </if>
+      <if test="senderId != null">
+        sender_id = #{senderId,jdbcType=BIGINT},
+      </if>
+      <if test="messageType != null">
+        message_type = #{messageType,jdbcType=TINYINT},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="imageUrl != null">
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recallAt != null">
+        recall_at = #{recallAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedAt != null">
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
   <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.ChatMessage">
     update chat_message
     set conversation_id = #{conversationId,jdbcType=BIGINT},
       sender_id = #{senderId,jdbcType=BIGINT},
-      "type" = #{type,jdbcType=TINYINT},
+      message_type = #{messageType,jdbcType=TINYINT},
       content = #{content,jdbcType=VARCHAR},
       image_url = #{imageUrl,jdbcType=VARCHAR},
       created_at = #{createdAt,jdbcType=TIMESTAMP},
@@ -36,15 +131,4 @@
       deleted_at = #{deletedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, conversation_id, sender_id, "type", content, image_url, created_at, recall_at, 
-    deleted_at
-    from chat_message
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select id, conversation_id, sender_id, "type", content, image_url, created_at, recall_at, 
-    deleted_at
-    from chat_message
-  </select>
 </mapper>

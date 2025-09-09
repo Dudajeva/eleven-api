@@ -3,7 +3,7 @@
 <mapper namespace="org.adzc.elevenapi.mapper.ChatConversationMapper">
   <resultMap id="BaseResultMap" type="org.adzc.elevenapi.domain.ChatConversation">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="type" jdbcType="TINYINT" property="type" />
+    <result column="chat_type" jdbcType="TINYINT" property="chatType" />
     <result column="u1_id" jdbcType="BIGINT" property="u1Id" />
     <result column="u2_id" jdbcType="BIGINT" property="u2Id" />
     <result column="last_message_id" jdbcType="BIGINT" property="lastMessageId" />
@@ -12,21 +12,116 @@
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
   </resultMap>
+  <sql id="Base_Column_List">
+    id, chat_type, u1_id, u2_id, last_message_id, last_preview, last_time, created_at, 
+    updated_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from chat_conversation
+    where id = #{id,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from chat_conversation
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.ChatConversation" useGeneratedKeys="true">
-    insert into chat_conversation ("type", u1_id, u2_id, 
+    insert into chat_conversation (chat_type, u1_id, u2_id, 
       last_message_id, last_preview, last_time, 
       created_at, updated_at)
-    values (#{type,jdbcType=TINYINT}, #{u1Id,jdbcType=BIGINT}, #{u2Id,jdbcType=BIGINT}, 
+    values (#{chatType,jdbcType=TINYINT}, #{u1Id,jdbcType=BIGINT}, #{u2Id,jdbcType=BIGINT}, 
       #{lastMessageId,jdbcType=BIGINT}, #{lastPreview,jdbcType=VARCHAR}, #{lastTime,jdbcType=TIMESTAMP}, 
       #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
   </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.ChatConversation" useGeneratedKeys="true">
+    insert into chat_conversation
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="chatType != null">
+        chat_type,
+      </if>
+      <if test="u1Id != null">
+        u1_id,
+      </if>
+      <if test="u2Id != null">
+        u2_id,
+      </if>
+      <if test="lastMessageId != null">
+        last_message_id,
+      </if>
+      <if test="lastPreview != null">
+        last_preview,
+      </if>
+      <if test="lastTime != null">
+        last_time,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="chatType != null">
+        #{chatType,jdbcType=TINYINT},
+      </if>
+      <if test="u1Id != null">
+        #{u1Id,jdbcType=BIGINT},
+      </if>
+      <if test="u2Id != null">
+        #{u2Id,jdbcType=BIGINT},
+      </if>
+      <if test="lastMessageId != null">
+        #{lastMessageId,jdbcType=BIGINT},
+      </if>
+      <if test="lastPreview != null">
+        #{lastPreview,jdbcType=VARCHAR},
+      </if>
+      <if test="lastTime != null">
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.adzc.elevenapi.domain.ChatConversation">
+    update chat_conversation
+    <set>
+      <if test="chatType != null">
+        chat_type = #{chatType,jdbcType=TINYINT},
+      </if>
+      <if test="u1Id != null">
+        u1_id = #{u1Id,jdbcType=BIGINT},
+      </if>
+      <if test="u2Id != null">
+        u2_id = #{u2Id,jdbcType=BIGINT},
+      </if>
+      <if test="lastMessageId != null">
+        last_message_id = #{lastMessageId,jdbcType=BIGINT},
+      </if>
+      <if test="lastPreview != null">
+        last_preview = #{lastPreview,jdbcType=VARCHAR},
+      </if>
+      <if test="lastTime != null">
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
   <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.ChatConversation">
     update chat_conversation
-    set "type" = #{type,jdbcType=TINYINT},
+    set chat_type = #{chatType,jdbcType=TINYINT},
       u1_id = #{u1Id,jdbcType=BIGINT},
       u2_id = #{u2Id,jdbcType=BIGINT},
       last_message_id = #{lastMessageId,jdbcType=BIGINT},
@@ -36,15 +131,4 @@
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, "type", u1_id, u2_id, last_message_id, last_preview, last_time, created_at, 
-    updated_at
-    from chat_conversation
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select id, "type", u1_id, u2_id, last_message_id, last_preview, last_time, created_at, 
-    updated_at
-    from chat_conversation
-  </select>
 </mapper>

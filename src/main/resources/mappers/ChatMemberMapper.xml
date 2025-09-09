@@ -11,6 +11,16 @@
     <result column="deleted_at" jdbcType="TIMESTAMP" property="deletedAt" />
     <result column="joined_at" jdbcType="TIMESTAMP" property="joinedAt" />
   </resultMap>
+  <sql id="Base_Column_List">
+    id, conversation_id, user_id, last_read_message_id, is_muted, is_pinned, deleted_at, 
+    joined_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from chat_member
+    where id = #{id,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from chat_member
     where id = #{id,jdbcType=BIGINT}
@@ -23,6 +33,82 @@
       #{isMuted,jdbcType=TINYINT}, #{isPinned,jdbcType=TINYINT}, #{deletedAt,jdbcType=TIMESTAMP}, 
       #{joinedAt,jdbcType=TIMESTAMP})
   </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.ChatMember" useGeneratedKeys="true">
+    insert into chat_member
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="conversationId != null">
+        conversation_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="lastReadMessageId != null">
+        last_read_message_id,
+      </if>
+      <if test="isMuted != null">
+        is_muted,
+      </if>
+      <if test="isPinned != null">
+        is_pinned,
+      </if>
+      <if test="deletedAt != null">
+        deleted_at,
+      </if>
+      <if test="joinedAt != null">
+        joined_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="conversationId != null">
+        #{conversationId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="lastReadMessageId != null">
+        #{lastReadMessageId,jdbcType=BIGINT},
+      </if>
+      <if test="isMuted != null">
+        #{isMuted,jdbcType=TINYINT},
+      </if>
+      <if test="isPinned != null">
+        #{isPinned,jdbcType=TINYINT},
+      </if>
+      <if test="deletedAt != null">
+        #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="joinedAt != null">
+        #{joinedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.adzc.elevenapi.domain.ChatMember">
+    update chat_member
+    <set>
+      <if test="conversationId != null">
+        conversation_id = #{conversationId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="lastReadMessageId != null">
+        last_read_message_id = #{lastReadMessageId,jdbcType=BIGINT},
+      </if>
+      <if test="isMuted != null">
+        is_muted = #{isMuted,jdbcType=TINYINT},
+      </if>
+      <if test="isPinned != null">
+        is_pinned = #{isPinned,jdbcType=TINYINT},
+      </if>
+      <if test="deletedAt != null">
+        deleted_at = #{deletedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="joinedAt != null">
+        joined_at = #{joinedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
   <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.ChatMember">
     update chat_member
     set conversation_id = #{conversationId,jdbcType=BIGINT},
@@ -34,15 +120,4 @@
       joined_at = #{joinedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, conversation_id, user_id, last_read_message_id, is_muted, is_pinned, deleted_at, 
-    joined_at
-    from chat_member
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select id, conversation_id, user_id, last_read_message_id, is_muted, is_pinned, deleted_at, 
-    joined_at
-    from chat_member
-  </select>
 </mapper>

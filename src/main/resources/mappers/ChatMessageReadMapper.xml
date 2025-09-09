@@ -6,6 +6,16 @@
     <id column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="read_at" jdbcType="TIMESTAMP" property="readAt" />
   </resultMap>
+  <sql id="Base_Column_List">
+    message_id, user_id, read_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from chat_message_read
+    where message_id = #{messageId,jdbcType=BIGINT}
+      and user_id = #{userId,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="map">
     delete from chat_message_read
     where message_id = #{messageId,jdbcType=BIGINT}
@@ -17,20 +27,45 @@
     values (#{messageId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{readAt,jdbcType=TIMESTAMP}
       )
   </insert>
+  <insert id="insertSelective" parameterType="org.adzc.elevenapi.domain.ChatMessageRead">
+    insert into chat_message_read
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="messageId != null">
+        message_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="readAt != null">
+        read_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="messageId != null">
+        #{messageId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="readAt != null">
+        #{readAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.adzc.elevenapi.domain.ChatMessageRead">
+    update chat_message_read
+    <set>
+      <if test="readAt != null">
+        read_at = #{readAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where message_id = #{messageId,jdbcType=BIGINT}
+      and user_id = #{userId,jdbcType=BIGINT}
+  </update>
   <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.ChatMessageRead">
     update chat_message_read
     set read_at = #{readAt,jdbcType=TIMESTAMP}
     where message_id = #{messageId,jdbcType=BIGINT}
       and user_id = #{userId,jdbcType=BIGINT}
   </update>
-  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
-    select message_id, user_id, read_at
-    from chat_message_read
-    where message_id = #{messageId,jdbcType=BIGINT}
-      and user_id = #{userId,jdbcType=BIGINT}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select message_id, user_id, read_at
-    from chat_message_read
-  </select>
 </mapper>

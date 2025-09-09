@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
-    <context id="mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+    <context id="mysql" targetRuntime="MyBatis3" defaultModelType="flat">
         <!-- 关键：把 catalog 视为当前库（MySQL 用这个来限定 DB） -->
         <property name="nullCatalogMeansCurrent" value="true"/>
         <property name="autoDelimitKeywords" value="true"/>
@@ -27,18 +27,19 @@
                              targetProject="src/main/java"/>
 
         <!-- 不写 schema/catalog，只写表名；依赖“当前库=eleven” mvn clean mybatis-generator:generate -Dmybatis.generator.overwrite=true -->
-        <table  tableName="chat_block" domainObjectName="ChatBlock">
+<!--        <table  tableName="chat_block" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatBlock">-->
+<!--            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>-->
+<!--        </table>-->
+        <table  tableName="chat_conversation" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatConversation">
             <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
-        <table  tableName="chat_conversation" domainObjectName="ChatConversation">
+<!--        <table  tableName="chat_member" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatMember">-->
+<!--            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>-->
+<!--        </table>-->
+        <table  tableName="chat_message" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatMessage">
             <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
-        <table  tableName="chat_member" domainObjectName="ChatMember">
-            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
-        </table>
-        <table  tableName="chat_message" domainObjectName="ChatMessage">
-            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
-        </table>
-        <table  tableName="chat_message_read" domainObjectName="ChatMessageRead"/>
+<!--        <table  tableName="chat_message_read" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatMessageRead">-->
+<!--        </table>-->
     </context>
 </generatorConfiguration>

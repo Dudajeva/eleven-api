@@ -8,7 +8,7 @@ import java.util.Date;
 public class ChatConversation {
     private Long id;
 
-    private Integer type;
+    private Integer chatType;
 
     private Long u1Id;
 
