@@ -7,6 +7,15 @@
     <result column="target_id" jdbcType="BIGINT" property="targetId" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
   </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, target_id, created_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from chat_block
+    where id = #{id,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from chat_block
     where id = #{id,jdbcType=BIGINT}
@@ -17,6 +26,46 @@
     values (#{userId,jdbcType=BIGINT}, #{targetId,jdbcType=BIGINT}, #{createdAt,jdbcType=TIMESTAMP}
       )
   </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.ChatBlock" useGeneratedKeys="true">
+    insert into chat_block
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="targetId != null">
+        target_id,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="targetId != null">
+        #{targetId,jdbcType=BIGINT},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.adzc.elevenapi.domain.ChatBlock">
+    update chat_block
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="targetId != null">
+        target_id = #{targetId,jdbcType=BIGINT},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
   <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.ChatBlock">
     update chat_block
     set user_id = #{userId,jdbcType=BIGINT},
@@ -24,13 +73,4 @@
       created_at = #{createdAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, user_id, target_id, created_at
-    from chat_block
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select id, user_id, target_id, created_at
-    from chat_block
-  </select>
 </mapper>
