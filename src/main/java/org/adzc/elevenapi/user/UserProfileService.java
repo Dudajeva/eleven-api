@@ -24,7 +24,7 @@ public class UserProfileService {
         this.userMapper = userMapper;
     }
 
-    public UserProfile getOrInit(long userId) {
+    public UserProfile getByUserId(long userId) {
         UserProfile userProfile = userProfileMapper.selectByPrimaryKey(userId);
         return userProfile;
     }

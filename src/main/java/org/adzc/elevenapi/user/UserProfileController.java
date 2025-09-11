@@ -26,7 +26,7 @@ public class UserProfileController {
 
     @GetMapping("/me")
     public UserProfile me(@CurrentUid Long uid) {
-        return service.getOrInit(uid);
+        return service.getByUserId(uid);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -38,7 +38,7 @@ public class UserProfileController {
 
     @GetMapping("/{userId}")
     public UserProfile byId(@PathVariable Long userId) {
-        return service.getOrInit(userId);
+        return service.getByUserId(userId);
     }
 
     @PostMapping(path = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

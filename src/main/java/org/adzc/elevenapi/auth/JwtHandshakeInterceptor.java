@@ -33,7 +33,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
         }
         Jws<Claims> jws = jwtUtil.parseAndValidate(token); // 来自现有 JwtUtil
         Claims c = jws.getBody();
-        attributes.put("uid", c.get("uid"));               // 你的 JwtAuthFilter 里同样塞了 uid/sub 等  :contentReference[oaicite:2]{index=2}
+        attributes.put("uid", c.get("uid",Long.class));               // 你的 JwtAuthFilter 里同样塞了 uid/sub 等  :contentReference[oaicite:2]{index=2}
         attributes.put("identity", c.getSubject());        // sub = identity（手机号/邮箱）  :contentReference[oaicite:3]{index=3}
         return true;
     }
