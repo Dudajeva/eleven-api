@@ -30,13 +30,13 @@
 <!--        <table  tableName="chat_block" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatBlock">-->
 <!--            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>-->
 <!--        </table>-->
-        <table  tableName="chat_conversation" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatConversation">
+        <table  tableName="invitation" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="Invitation">
             <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
 <!--        <table  tableName="chat_member" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatMember">-->
 <!--            <generatedKey column="id" sqlStatement="JDBC" identity="true"/>-->
 <!--        </table>-->
-        <table  tableName="chat_message" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatMessage">
+        <table  tableName="invitation_sign_up" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="InvitationSignUp">
             <generatedKey column="id" sqlStatement="JDBC" identity="true"/>
         </table>
 <!--        <table  tableName="chat_message_read" enableSelectByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableCountByExample="false" domainObjectName="ChatMessageRead">-->

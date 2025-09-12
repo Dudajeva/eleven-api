@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.InvitationSignUpMapper">
+
+    <select id="exists" resultType="int">
+        SELECT COUNT(1) FROM invitation_sign_up
+        WHERE invitation_id = #{invitationId} AND user_id = #{userId}
+    </select>
+
+    <insert id="insertOne">
+        INSERT INTO invitation_sign_up (invitation_id, user_id, sign_up_time)
+        VALUES (#{invitationId}, #{userId}, NOW())
+    </insert>
+
+    <select id="countByInvitation" resultType="int">
+        SELECT COUNT(1) FROM invitation_sign_up WHERE invitation_id = #{invitationId}
+    </select>
+    <select id="countTodayByUser" resultType="int">
+        SELECT COUNT(1) FROM invitation_sign_up
+        WHERE user_id = #{userId}
+          AND DATE(sign_up_time) = CURRENT_DATE
+    </select>
+</mapper>

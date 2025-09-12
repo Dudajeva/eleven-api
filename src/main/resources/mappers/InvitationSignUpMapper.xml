@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.InvitationSignUpMapper">
+  <resultMap id="BaseResultMap" type="org.adzc.elevenapi.domain.InvitationSignUp">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="invitation_id" jdbcType="BIGINT" property="invitationId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="sign_up_time" jdbcType="TIMESTAMP" property="signUpTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, invitation_id, user_id, sign_up_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from invitation_sign_up
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from invitation_sign_up
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.InvitationSignUp" useGeneratedKeys="true">
+    insert into invitation_sign_up (invitation_id, user_id, sign_up_time
+      )
+    values (#{invitationId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{signUpTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="org.adzc.elevenapi.domain.InvitationSignUp" useGeneratedKeys="true">
+    insert into invitation_sign_up
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="invitationId != null">
+        invitation_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="signUpTime != null">
+        sign_up_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="invitationId != null">
+        #{invitationId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="signUpTime != null">
+        #{signUpTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="org.adzc.elevenapi.domain.InvitationSignUp">
+    update invitation_sign_up
+    <set>
+      <if test="invitationId != null">
+        invitation_id = #{invitationId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="signUpTime != null">
+        sign_up_time = #{signUpTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.InvitationSignUp">
+    update invitation_sign_up
+    set invitation_id = #{invitationId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      sign_up_time = #{signUpTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

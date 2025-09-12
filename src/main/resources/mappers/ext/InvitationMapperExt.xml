@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.adzc.elevenapi.mapper.InvitationMapper">
+
+    <resultMap id="InvitationCardMap" type="org.adzc.elevenapi.invitation.dto.InvitationCardDTO">
+        <id     property="id"          column="id"/>
+        <result property="publisherId" column="publisher_id"/>
+        <result property="title"       column="title"/>
+        <result property="content"     column="content"/>
+        <result property="location"    column="location"/>
+        <result property="imageUrl"    column="image_url"/>
+        <result property="createdAt"   column="created_at"/>
+
+        <result property="nickname"    column="nickname"/>
+        <result property="avatarUrl"   column="avatar_url"/>
+        <result property="age"         column="age"/>
+        <result property="province"    column="province"/>
+        <result property="city"        column="city"/>
+
+        <result property="tier"        column="tier"/>
+        <result property="signedUp"    column="signed_up"/>
+        <result property="signUpCount" column="sign_up_count"/>
+    </resultMap>
+
+    <select id="countAll" resultType="long">
+        SELECT COUNT(1) FROM invitation
+    </select>
+
+    <select id="selectInvitationCards" resultMap="InvitationCardMap">
+        SELECT
+            i.id,
+            i.user_id            AS publisher_id,
+            i.title,
+            i.content,
+            i.location,
+            i.image_url,
+            i.created_at,
+
+            up.nickname,
+            up.avatar_url,
+            up.age,
+            up.province,
+            up.city,
+
+            /* 会员等级：有效的 active 且未过期，没有则 normal */
+            COALESCE((
+                         SELECT um.tier FROM user_membership um
+                         WHERE um.user_id = i.user_id
+                           AND um.status = 'active'
+                           AND (um.expire_time IS NULL OR um.expire_time > NOW())
+                         ORDER BY um.expire_time DESC
+                         LIMIT 1
+                     ), 'normal') AS tier,
+
+            /* 当前用户是否已报名（未登录则 false） */
+            CASE WHEN #{currentUid} IS NULL THEN FALSE
+                 ELSE EXISTS (
+                     SELECT 1 FROM invitation_sign_up isu
+                     WHERE isu.invitation_id = i.id AND isu.user_id = #{currentUid}
+                 )
+                END AS signed_up,
+
+            /* 报名总数 */
+            (SELECT COUNT(1) FROM invitation_sign_up x WHERE x.invitation_id = i.id) AS sign_up_count
+
+        FROM invitation i
+                 LEFT JOIN user_profile up ON up.user_id = i.user_id
+        WHERE 1=1
+        <if test="currentUid != null">
+            AND i.user_id &lt;&gt; #{currentUid}
+        </if>
+        ORDER BY i.created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+</mapper>
