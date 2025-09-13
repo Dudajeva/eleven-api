@@ -49,4 +49,6 @@ public class UserProfile {
 
     private String hobbies;
 
+    private String tier;
+
 }

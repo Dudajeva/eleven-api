@@ -28,44 +28,46 @@
 
     <select id="selectInvitationCards" resultMap="InvitationCardMap">
         SELECT
-            i.id,
-            i.user_id            AS publisher_id,
-            i.title,
-            i.content,
-            i.location,
-            i.image_url,
-            i.created_at,
+        i.id,
+        i.user_id                AS publisher_id,
+        i.title, i.content, i.location, i.image_url, i.created_at,
+        up.nickname, up.avatar_url, up.age, up.province, up.city,
+        um1.tier,
 
-            up.nickname,
-            up.avatar_url,
-            up.age,
-            up.province,
-            up.city,
+        CASE WHEN #{currentUid} IS NULL THEN FALSE
+        ELSE EXISTS (
+        SELECT 1 FROM invitation_sign_up isu
+        WHERE isu.invitation_id = i.id
+        AND isu.user_id = #{currentUid}
+        )
+        END AS signed_up,
 
-            /* 会员等级：有效的 active 且未过期，没有则 normal */
-            COALESCE((
-                         SELECT um.tier FROM user_membership um
-                         WHERE um.user_id = i.user_id
-                           AND um.status = 'active'
-                           AND (um.expire_time IS NULL OR um.expire_time > NOW())
-                         ORDER BY um.expire_time DESC
-                         LIMIT 1
-                     ), 'normal') AS tier,
-
-            /* 当前用户是否已报名（未登录则 false） */
-            CASE WHEN #{currentUid} IS NULL THEN FALSE
-                 ELSE EXISTS (
-                     SELECT 1 FROM invitation_sign_up isu
-                     WHERE isu.invitation_id = i.id AND isu.user_id = #{currentUid}
-                 )
-                END AS signed_up,
-
-            /* 报名总数 */
-            (SELECT COUNT(1) FROM invitation_sign_up x WHERE x.invitation_id = i.id) AS sign_up_count
+        COALESCE(suc.sign_up_count, 0) AS sign_up_count
 
         FROM invitation i
-                 LEFT JOIN user_profile up ON up.user_id = i.user_id
-        WHERE 1=1
+        /* 只保留“有效会员”的发布者：INNER JOIN 生效的会员集合 */
+        INNER JOIN (
+        SELECT user_id, tier
+        FROM (
+        SELECT
+        um.user_id, um.tier, um.expire_time,
+        ROW_NUMBER() OVER (PARTITION BY um.user_id ORDER BY um.expire_time DESC) AS rn
+        FROM user_membership um
+        WHERE um.status = 'active'
+        AND (um.expire_time IS NULL OR um.expire_time > NOW())
+        ) z
+        WHERE z.rn = 1
+        ) um1 ON um1.user_id = i.user_id
+
+        LEFT JOIN user_profile up ON up.user_id = i.user_id
+
+        LEFT JOIN (
+        SELECT invitation_id, COUNT(*) AS sign_up_count
+        FROM invitation_sign_up
+        GROUP BY invitation_id
+        ) suc ON suc.invitation_id = i.id
+
+        WHERE audit_status = 1
         <if test="currentUid != null">
             AND i.user_id &lt;&gt; #{currentUid}
         </if>
@@ -73,4 +75,11 @@
         LIMIT #{size} OFFSET #{offset}
     </select>
 
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from invitation
+        WHERE user_id = #{currentUid}
+        ORDER BY created_at DESC
+    </select>
 </mapper>

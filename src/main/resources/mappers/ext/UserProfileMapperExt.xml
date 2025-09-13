@@ -17,4 +17,42 @@
             updated_at = NOW()
         WHERE user_id = #{uid}
     </update>
+
+    <select id="selectByIds"
+            parameterType="list"
+            resultMap="BaseResultMap">
+        <choose>
+            <when test="list != null and list.size() > 0">
+                SELECT
+                user_id,
+                nickname,
+                avatar_url,
+                gender,
+                age,
+                city,
+                member_level,
+                created_at,
+                updated_at
+                FROM user_profile
+                WHERE user_id IN
+                <foreach collection="list" item="uid" open="(" separator="," close=")">
+                    #{uid}
+                </foreach>
+            </when>
+            <otherwise>
+                SELECT
+                user_id,
+                nickname,
+                avatar_url,
+                gender,
+                age,
+                city,
+                member_level,
+                created_at,
+                updated_at
+                FROM user_profile
+                WHERE 1 = 0
+            </otherwise>
+        </choose>
+    </select>
 </mapper>

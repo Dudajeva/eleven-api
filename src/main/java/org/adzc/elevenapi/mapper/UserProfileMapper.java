@@ -21,4 +21,6 @@ public interface UserProfileMapper {
 
     int updateHidePhotos(@Param("uid") Long uid, @Param("hide") boolean hide); // 新增
 
+    List<UserProfile> selectByIds(@Param("ids") List<Long> userIds);
+
 }

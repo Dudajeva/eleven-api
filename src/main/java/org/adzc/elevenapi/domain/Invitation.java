@@ -14,6 +14,10 @@ public class Invitation {
 
     private String location;
 
+    private int auditStatus;
+
+    private String auditReason;
+
     private String imageUrl;
 
     private Date createdAt;

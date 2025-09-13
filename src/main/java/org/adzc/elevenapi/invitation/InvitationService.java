@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.adzc.elevenapi.common.PageResult;
 import org.adzc.elevenapi.domain.*;
 import org.adzc.elevenapi.invitation.dto.InvitationCardDTO;
+import org.adzc.elevenapi.invitation.dto.MyInvitationDTO;
 import org.adzc.elevenapi.invitation.dto.SignUpResultDTO;
 import org.adzc.elevenapi.mapper.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +32,25 @@ public class InvitationService {
         List<InvitationCardDTO> list = invitationMapper.selectInvitationCards(offset, s, currentUid);
 
         return new PageResult<>(list, p, s, total);
+    }
+
+    public List<MyInvitationDTO> myInvitations(Long currentUid) {
+        // 1) 我发布的邀约
+        List<Invitation> mine = invitationMapper.selectByUserId(currentUid);
+        if (mine == null || mine.isEmpty()) return List.of();
+
+        // 2) 补充报名用户与人数
+        List<MyInvitationDTO> result = new ArrayList<>(mine.size());
+        for (Invitation inv : mine) {
+            int cnt = invitationSignUpMapper.countSignUps(inv.getId());
+            List<UserProfile> profiles = invitationSignUpMapper.selectSignUpProfiles(inv.getId());
+            result.add(new MyInvitationDTO(inv, profiles, cnt));
+        }
+        return result;
+    }
+
+    public Invitation invitationDetail(Long id) {
+        return invitationMapper.selectByPrimaryKey(id);
     }
 
     @Transactional

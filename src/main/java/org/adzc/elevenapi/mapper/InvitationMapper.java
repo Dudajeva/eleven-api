@@ -19,7 +19,6 @@ public interface InvitationMapper {
 
     int updateByPrimaryKeySelective(Invitation row);
 
-    int updateByPrimaryKeyWithBLOBs(Invitation row);
 
     int updateByPrimaryKey(Invitation row);
 
@@ -30,4 +29,5 @@ public interface InvitationMapper {
                                                   @Param("size") int size,
                                                   @Param("currentUid") Long currentUid);
 
+    List<Invitation> selectByUserId(@Param("currentUid") Long currentUid);
 }

@@ -16,13 +16,14 @@
     <result column="profession" jdbcType="VARCHAR" property="profession" />
     <result column="zodiac" jdbcType="VARCHAR" property="zodiac" />
     <result column="drinking" jdbcType="VARCHAR" property="drinking" />
-      <result column="intro" jdbcType="VARCHAR" property="intro" />
+    <result column="intro" jdbcType="VARCHAR" property="intro" />
     <result column="wechat" jdbcType="VARCHAR" property="wechat" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
     <result column="hide_photos" jdbcType="BIT" property="hidePhotos" />
     <result column="first_login" jdbcType="BIT" property="firstLogin" />
     <result column="gallery_json" jdbcType="LONGVARCHAR" property="galleryJson" />
     <result column="hobbies" jdbcType="LONGVARCHAR" property="hobbies" />
+      <result column="tier" jdbcType="VARCHAR" property="tier" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from user_profile
@@ -35,14 +36,14 @@
       province, city, profession, 
       zodiac, drinking,intro, wechat,
       updated_at, hide_photos, first_login, 
-      gallery_json, hobbies)
+      gallery_json, hobbies,tier)
     values (#{userId,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}, #{avatarUrl,jdbcType=VARCHAR}, 
       #{photoUrl,jdbcType=VARCHAR}, #{gender,jdbcType=TINYINT}, #{age,jdbcType=INTEGER}, 
       #{birthday,jdbcType=DATE}, #{heightCm,jdbcType=SMALLINT}, #{weightKg,jdbcType=SMALLINT}, 
       #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{profession,jdbcType=VARCHAR}, 
       #{zodiac,jdbcType=VARCHAR}, #{drinking,jdbcType=VARCHAR},#{intro,jdbcType=VARCHAR}, #{wechat,jdbcType=VARCHAR},
       #{updatedAt,jdbcType=TIMESTAMP}, #{hidePhotos,jdbcType=BIT}, #{firstLogin,jdbcType=BIT}, 
-      #{galleryJson,jdbcType=LONGVARCHAR}, #{hobbies,jdbcType=LONGVARCHAR})
+      #{galleryJson,jdbcType=LONGVARCHAR}, #{hobbies,jdbcType=LONGVARCHAR},#{tier,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="org.adzc.elevenapi.domain.UserProfile">
     update user_profile
@@ -65,20 +66,21 @@
       hide_photos = #{hidePhotos,jdbcType=BIT},
       first_login = #{firstLogin,jdbcType=BIT},
       gallery_json = #{galleryJson,jdbcType=LONGVARCHAR},
-      hobbies = #{hobbies,jdbcType=LONGVARCHAR}
+      hobbies = #{hobbies,jdbcType=LONGVARCHAR},
+        tier = #{tier,jdbcType=VARCHAR}
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select user_id, nickname, avatar_url, photo_url, gender, age, birthday, height_cm, 
     weight_kg, province, city, profession, zodiac, drinking, intro,wechat, updated_at, hide_photos,
-    first_login, gallery_json, hobbies
+    first_login, gallery_json, hobbies,tier
     from user_profile
     where user_id = #{userId,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select user_id, nickname, avatar_url, photo_url, gender, age, birthday, height_cm, 
     weight_kg, province, city, profession, zodiac, drinking, intro,wechat, updated_at, hide_photos,
-    first_login, gallery_json, hobbies
+    first_login, gallery_json, hobbies,tier
     from user_profile
   </select>
 </mapper>

@@ -6,10 +6,11 @@ import org.adzc.elevenapi.auth.CurrentUid;
 import org.adzc.elevenapi.common.PageResult;
 import org.adzc.elevenapi.domain.Invitation;
 import org.adzc.elevenapi.invitation.dto.InvitationCardDTO;
+import org.adzc.elevenapi.invitation.dto.MyInvitationDTO;
 import org.adzc.elevenapi.invitation.dto.SignUpResultDTO;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/invitations")
@@ -28,6 +29,13 @@ public class InvitationController {
         return invitationService.getInvitationCards(page, size, currentUid);
     }
 
+    @GetMapping("/myInvitations")
+    public List<MyInvitationDTO> myInvitations(
+            @CurrentUid Long currentUid
+    ) {
+        return invitationService.myInvitations(currentUid);
+    }
+
     // 发布
     @PostMapping("/create")
     public Invitation create(@RequestBody Invitation invitation, @CurrentUid Long currentUid) {
@@ -44,5 +52,10 @@ public class InvitationController {
             throw new IllegalArgumentException("invitationId is required");
         }
         return invitationService.signUp(invitationId, userId);
+    }
+
+    @GetMapping("/{id}")
+    public Invitation invitationDetail(@PathVariable Long id) {
+        return invitationService.invitationDetail(id);
     }
 }

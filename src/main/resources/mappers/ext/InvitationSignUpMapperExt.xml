@@ -20,4 +20,23 @@
         WHERE user_id = #{userId}
           AND DATE(sign_up_time) = CURRENT_DATE
     </select>
+
+    <select id="selectByInvitation" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM invitation_sign_up WHERE invitation_id = #{invitationId}
+    </select>
+
+
+    <select id="selectSignUpProfiles" resultType="org.adzc.elevenapi.domain.UserProfile">
+        SELECT up.*
+        FROM invitation_sign_up isu
+                 JOIN user_profile up ON up.user_id = isu.user_id
+        WHERE isu.invitation_id = #{invitationId}
+        ORDER BY isu.sign_up_time DESC
+    </select>
+
+    <select id="countSignUps" resultType="int">
+        SELECT COUNT(1) FROM invitation_sign_up WHERE invitation_id = #{invitationId}
+    </select>
 </mapper>
